@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" href="https://cdn.plyr.io/1.8.2/plyr.css">
+	<script src="https://cdn.plyr.io/1.8.2/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/hls.js/latest/hls.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <style>
@@ -18,9 +21,7 @@ html, body {
 </style>
 </head>
 <body>
-
-<video id="video" autoplay></video>
-
+	<video id="video" controls></video>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.2.9"></script>
 
 <script>
@@ -46,7 +47,7 @@ const create = () => {
 		hls.loadSource('index.m3u8');
 		hls.attachMedia(video);
 		video.play();
-		
+
 	} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
 		// since it's not possible to detect timeout errors in iOS,
 		// wait for the playlist to be available before starting the stream
@@ -56,11 +57,9 @@ const create = () => {
 				video.play();
 			});
 	}
+	plyr.setup(video)
 };
-
 window.addEventListener('DOMContentLoaded', create);
-
 </script>
-
 </body>
 </html>

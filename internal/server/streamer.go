@@ -24,7 +24,6 @@ func handleIndex(wrapped http.HandlerFunc) http.HandlerFunc {
 			w.Write([]byte(index))
 			return
 		}
-
 		wrapped(w, r)
 	}
 }
@@ -36,7 +35,9 @@ func Stream() {
 			Codec: &codecs.H264{},
 		},
 		AudioTrack: &gohlslib.Track{
-			Codec: &codecs.Opus{},
+			Codec: &codecs.Opus{
+				ChannelCount: 2,
+			},
 		},
 	}
 	err := mux.Start()
@@ -58,12 +59,6 @@ func Stream() {
 		panic(err)
 	}
 	defer pc.Close()
-
-	// log.Println("Waiting for a MPEG-TS/H264 stream on UDP port 9000 - you can send one with GStreamer:\n" +
-	// 	"gst-launch-1.0 videotestsrc ! video/x-raw,width=1920,height=1080" +
-	// 	" ! x264enc speed-preset=ultrafast bitrate=3000 key-int-max=60" +
-	// 	" ! video/x-h264,profile=high" +
-	// 	" ! mpegtsmux alignment=6 ! udpsink host=127.0.0.1 port=9000")
 
 	// create a MPEG-TS reader
 	r, err := mpegts.NewReader(mpegts.NewBufferedReader(newPacketConnReader(pc)))
