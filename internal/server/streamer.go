@@ -3,7 +3,6 @@ package server
 import (
 	"log"
 	"net"
-	"net/http"
 	"time"
 
 	_ "embed"
@@ -13,22 +12,7 @@ import (
 	"github.com/bluenviron/mediacommon/pkg/formats/mpegts"
 )
 
-//go:embed index.html
-var index []byte
-
-func handleIndex(wrapped http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
-			w.Header().Set("Content-Type", "text/html")
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(index))
-			return
-		}
-		wrapped(w, r)
-	}
-}
-
-func (s *Server) Stream() {
+func (s *Server) stream() {
 	// create the HLS muxer
 	mux := &gohlslib.Muxer{
 		VideoTrack: &gohlslib.Track{
@@ -44,7 +28,9 @@ func (s *Server) Stream() {
 	if err != nil {
 		panic(err)
 	}
-	s.router.Handle("/*", handleIndex(mux.Handle))
+
+	s.router.HandleFunc("/*", mux.Handle)
+
 	// create a socket to receive MPEG-TS packets
 	pc, err := net.ListenPacket("udp", "localhost:9000")
 	if err != nil {
@@ -68,10 +54,7 @@ func (s *Server) Stream() {
 					timeDec = mpegts.NewTimeDecoder(rawPTS)
 				}
 				pts := timeDec.Decode(rawPTS)
-				err := mux.WriteH26x(time.Now(), pts, au)
-				if err != nil {
-					log.Panic(err)
-				}
+				mux.WriteH26x(time.Now(), pts, au)
 				return nil
 			})
 			VideoFound = true
@@ -82,10 +65,7 @@ func (s *Server) Stream() {
 					timeDec = mpegts.NewTimeDecoder(rawPTS)
 				}
 				pts := timeDec.Decode(rawPTS)
-				err := mux.WriteOpus(time.Now(), pts, aus)
-				if err != nil {
-					return err
-				}
+				mux.WriteOpus(time.Now(), pts, aus)
 				return nil
 			})
 			AudioFound = true

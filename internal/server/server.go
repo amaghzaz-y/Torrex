@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -19,14 +20,17 @@ func DefaultServer() *Server {
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
-		MaxAge:           300,
+		// MaxAge:           300,
 	}))
 	return &Server{
 		router,
 	}
 }
 
-func (s *Server) Start() {
-	go s.Stream()
-	http.ListenAndServe(":4000", s.router)
+func (s *Server) Start() error {
+	go s.stream()
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+	return http.ListenAndServe("127.0.0.1:4000", s.router)
 }
