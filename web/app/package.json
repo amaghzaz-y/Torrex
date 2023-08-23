@@ -9,13 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/themes": "^1.1.2",
     "@types/node": "20.5.3",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
+    "hls.js": "^1.4.10",
     "next": "13.4.19",
+    "plyr": "^3.7.8",
     "postcss": "8.4.28",
     "react": "18.2.0",
     "react-dom": "18.2.0",
