@@ -35,6 +35,23 @@ func (t *Torrex) RegisterTorrentMagnet(magnet string) error {
 	return nil
 }
 
+func (t *Torrex) DownloadFiles() {
+	for _, t := range t.torrents {
+		t.DownloadAll()
+	}
+}
+
+func (t *Torrex) IsDownloadComplete() bool {
+	state := false
+	for _, torr := range t.torrents {
+		if torr.Stats().PiecesComplete == torr.NumPieces() {
+			state = true
+		}
+		state = false
+	}
+	return state
+}
+
 // func GetFilesWithSuffix(t *torrent.Torrent, suffixes []string) []*torrent.File {
 // 	var files []*torrent.File
 // 	for _, file := range t.Files() {
@@ -56,20 +73,3 @@ func (t *Torrex) RegisterTorrentMagnet(magnet string) error {
 // 		}
 // 	}
 // }
-
-func (t *Torrex) DownloadFiles() {
-	for _, t := range t.torrents {
-		t.DownloadAll()
-	}
-}
-
-func (t *Torrex) IsDownloadComplete() bool {
-	state := false
-	for _, torr := range t.torrents {
-		if torr.Stats().PiecesComplete == torr.NumPieces() {
-			state = true
-		}
-		state = false
-	}
-	return state
-}

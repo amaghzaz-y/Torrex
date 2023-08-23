@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/anacrolix/torrent"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 type Torrex struct {
@@ -17,6 +19,11 @@ func NewClient() *Torrex {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	minio.New("", &minio.Options{
+		Creds: credentials.New(&credentials.CustomTokenIdentity{
+			
+		}),
+	})
 	return &Torrex{
 		client,
 		nil,
