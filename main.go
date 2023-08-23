@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/amaghzaz-y/torrex/pkg/scraper"
+	"github.com/amaghzaz-y/torrex/internal/scraper"
 )
 
 func main() {
