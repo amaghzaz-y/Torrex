@@ -1,8 +1,6 @@
 package server
 
 import (
-	"net/http"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 )
@@ -26,8 +24,7 @@ func DefaultServer() *Server {
 	}
 }
 
-func (s *Server) Start() {
-	fs := http.FileServer(http.Dir("./Looney/hls"))
-	s.router.Handle("/*", fs)
-	http.ListenAndServe(":3000", s.router)
-}
+// func (s *Server) Start() {
+// 	go s.Stream()
+// 	http.ListenAndServe(":3000", s.router)
+// }

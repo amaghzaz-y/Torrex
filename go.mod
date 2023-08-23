@@ -5,6 +5,14 @@ go 1.19
 require github.com/anacrolix/torrent v1.52.5
 
 require (
+	github.com/abema/go-mp4 v0.12.0 // indirect
+	github.com/aler9/writerseeker v1.1.0 // indirect
+	github.com/asticode/go-astikit v0.30.0 // indirect
+	github.com/asticode/go-astits v1.12.0 // indirect
+	github.com/bluenviron/mediacommon v1.0.0 // indirect
+)
+
+require (
 	crawshaw.io/sqlite v0.3.3-0.20220618202545-d1964889ea3c // indirect
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/RoaringBitmap/roaring v1.2.3 // indirect
@@ -30,6 +38,7 @@ require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/benbjohnson/immutable v0.3.0 // indirect
 	github.com/bits-and-blooms/bitset v1.2.2 // indirect
+	github.com/bluenviron/gohlslib v1.0.0
 	github.com/bradfitz/iter v0.0.0-20191230175014-e8f45d346db8 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
