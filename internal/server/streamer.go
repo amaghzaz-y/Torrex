@@ -1,7 +1,6 @@
 package server
 
 import (
-	"errors"
 	"log"
 	"net"
 	"net/http"
@@ -29,7 +28,7 @@ func handleIndex(wrapped http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func (s *Server) Stream() error {
+func (s *Server) Stream() {
 	// create the HLS muxer
 	mux := &gohlslib.Muxer{
 		VideoTrack: &gohlslib.Track{
@@ -99,9 +98,6 @@ func (s *Server) Stream() error {
 	}
 	log.Println("stream started")
 	for {
-		err := r.Read()
-		if err != nil {
-			return errors.New("stream source disconnected")
-		}
+		r.Read()
 	}
 }
