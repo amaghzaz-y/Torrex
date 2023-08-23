@@ -2,29 +2,32 @@ package main
 
 import (
 	"log"
+	"time"
 
-	"github.com/amaghzaz-y/torrex/internal/scraper"
+	torrex "github.com/amaghzaz-y/torrex/internal"
 )
 
 func main() {
-	// c := torrex.NewClient()
-	// if err := c.RegisterTorrentFile("looney.torrent"); err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// c.DownloadFiles()
-	// for {
-	// 	if c.IsDownloadComplete() {
-	// 		break
-	// 	}
-	// }
-	// log.Println("finished download")
-	link, err := scraper.FetchMovieLink("spider man")
-	if err != nil {
-		log.Fatal(err)
+	c := torrex.NewClient()
+	if err := c.RegisterTorrentFile("assets/looney.torrent"); err != nil {
+		log.Fatalln(err)
 	}
-	link, err = scraper.FetchMovieMagnet(link)
-	if err != nil {
-		log.Fatal(err)
+	c.DownloadFiles()
+	for {
+		if c.IsDownloadComplete() {
+			break
+		}
+		c.LogInfo()
+		time.Sleep(5 * time.Second)
 	}
-	log.Println(link)
+	log.Println("finished download")
+	// link, err := scraper.FetchMovieLink("spider man")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// link, err = scraper.FetchMovieMagnet(link)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Println(link)
 }

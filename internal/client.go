@@ -11,7 +11,6 @@ import (
 type Torrex struct {
 	client   *torrent.Client
 	torrents []*torrent.Torrent
-	files    []*torrent.File
 }
 
 func NewClient() *Torrex {
@@ -20,13 +19,10 @@ func NewClient() *Torrex {
 		log.Fatalln(err)
 	}
 	minio.New("", &minio.Options{
-		Creds: credentials.New(&credentials.CustomTokenIdentity{
-			
-		}),
+		Creds: credentials.New(&credentials.CustomTokenIdentity{}),
 	})
 	return &Torrex{
 		client,
-		nil,
 		nil,
 	}
 }

@@ -46,30 +46,18 @@ func (t *Torrex) IsDownloadComplete() bool {
 	for _, torr := range t.torrents {
 		if torr.Stats().PiecesComplete == torr.NumPieces() {
 			state = true
+		} else {
+			state = false
 		}
-		state = false
 	}
 	return state
 }
 
-// func GetFilesWithSuffix(t *torrent.Torrent, suffixes []string) []*torrent.File {
-// 	var files []*torrent.File
-// 	for _, file := range t.Files() {
-// 		for _, suffix := range suffixes {
-// 			if strings.HasSuffix(file.DisplayPath(), suffix) {
-// 				files = append(files, file)
-// 			}
-// 		}
-// 	}
-// 	return files
-// }
-
-// func (t *Torrex) DownloadFilesWithFormat(formats []string) {
-// 	for _, torrent := range t.torrents {
-// 		files := GetFilesWithSuffix(torrent, formats)
-// 		for _, file := range files {
-// 			t.files = append(t.files, file)
-// 			file.Download()
-// 		}
-// 	}
-// }
+func (t *Torrex) LogInfo() {
+	for _, torr := range t.torrents {
+		log.Println(torr.String(), "peers:", torr.Stats().ActivePeers,
+			"status:", torr.BytesCompleted(), "/", torr.Length(),
+			"pieces:", torr.NumPieces(), "/", torr.Stats().PiecesComplete,
+		)
+	}
+}
