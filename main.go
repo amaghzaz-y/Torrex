@@ -22,5 +22,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	link, err = scraper.FetchMovieMagnet(link)
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Println(link)
 }

@@ -17,7 +17,7 @@ func FetchMovieLink(query string) (string, error) {
 	url := fmt.Sprintf("%s%s%s", rarbg[0], query, rarbg[1])
 	res, err := http.DefaultClient.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("error: movie search on yts failed, status : %s", res.Status)
+		return "", err
 	}
 	defer res.Body.Close()
 	doc, err := goquery.NewDocumentFromReader(res.Body)
@@ -28,4 +28,18 @@ func FetchMovieLink(query string) (string, error) {
 	url = x.Nodes[1].Attr[0].Val
 	url = fmt.Sprintf("%s%s", rarbg_host, url)
 	return url, nil
+}
+
+func FetchMovieMagnet(movielink string) (string, error) {
+	res, err := http.DefaultClient.Get(movielink)
+	if err != nil {
+		return "", err
+	}
+	defer res.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return "", err
+	}
+	magnet, _ := doc.Find("#hvicwlo").Attr("href")
+	return magnet, nil
 }
