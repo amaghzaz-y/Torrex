@@ -98,6 +98,16 @@ func (s *Server) Stream() {
 	}
 	log.Println("stream started")
 	for {
-		r.Read()
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("error: stream halted due to", err)
+				return
+			}
+		}()
+		err := r.Read()
+		if err != nil {
+			break
+		}
 	}
+	log.Println("stream finished")
 }

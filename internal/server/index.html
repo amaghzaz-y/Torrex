@@ -21,7 +21,7 @@ html, body {
 </style>
 </head>
 <body>
-	<video id="video" controls></video>
+	<video id="video" controls autoplay playsinline></video>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.2.9"></script>
 
 <script>
@@ -57,7 +57,7 @@ const create = () => {
 				video.play();
 			});
 	}
-	plyr.setup(video)
+	// plyr.setup(video)
 };
 window.addEventListener('DOMContentLoaded', create);
 </script>
