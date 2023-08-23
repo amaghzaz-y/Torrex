@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 )
 
 type Server struct {
@@ -12,11 +13,21 @@ type Server struct {
 
 func DefaultServer() *Server {
 	router := chi.NewRouter()
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
 	return &Server{
 		router,
 	}
 }
 
 func (s *Server) Start() {
+	fs := http.FileServer(http.Dir("./Looney/hls"))
+	s.router.Handle("/*", fs)
 	http.ListenAndServe(":3000", s.router)
 }
