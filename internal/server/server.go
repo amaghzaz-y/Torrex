@@ -28,5 +28,5 @@ func DefaultServer() *Server {
 
 func (s *Server) Start() {
 	go s.Stream()
-	http.ListenAndServe(":3000", s.router)
+	http.ListenAndServe(":4000", s.router)
 }

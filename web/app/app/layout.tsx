@@ -15,10 +15,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <Theme>
-        <body className={inter.className}>{children}</body>
-      </Theme>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <Theme appearance="dark">{children}</Theme>
+      </body>
     </html>
   );
 }

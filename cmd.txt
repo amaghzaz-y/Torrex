@@ -1,1 +1,1 @@
-ffmpeg -re -i Looney.mkv -c:v libx264 -c:a libopus -ac 2 -f mpegts udp://127.0.0.1:9000?pkt_size=1316
+ffmpeg -re -i Looney.mkv -c:v libx264 -b:v 6000k -c:a libopus -b:a 72k -ac 2 -preset ultrafast -f mpegts udp://127.0.0.1:9000?pkt_size=1316
