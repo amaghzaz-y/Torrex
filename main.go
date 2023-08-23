@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	server.Stream()
+	server.DefaultServer().Start()
 }

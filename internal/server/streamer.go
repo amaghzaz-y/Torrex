@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"log"
 	"net"
 	"net/http"
@@ -28,7 +29,7 @@ func handleIndex(wrapped http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func Stream() {
+func (s *Server) Stream() error {
 	// create the HLS muxer
 	mux := &gohlslib.Muxer{
 		VideoTrack: &gohlslib.Track{
@@ -44,15 +45,7 @@ func Stream() {
 	if err != nil {
 		panic(err)
 	}
-
-	// create an HTTP server and link it to the HLS muxer
-	s := &http.Server{
-		Addr:    ":8080",
-		Handler: handleIndex(mux.Handle),
-	}
-	log.Println("HTTP server created on :8080")
-	go s.ListenAndServe()
-
+	s.router.Handle("/*", handleIndex(mux.Handle))
 	// create a socket to receive MPEG-TS packets
 	pc, err := net.ListenPacket("udp", "localhost:9000")
 	if err != nil {
@@ -71,22 +64,17 @@ func Stream() {
 	VideoFound, AudioFound := false, false
 	for _, track := range r.Tracks() {
 		if _, ok := track.Codec.(*mpegts.CodecH264); ok {
-			// setup a callback that is called once a H264 access unit is received
 			r.OnDataH26x(track, func(rawPTS int64, _ int64, au [][]byte) error {
-				// decode the time
 				if timeDec == nil {
 					timeDec = mpegts.NewTimeDecoder(rawPTS)
 				}
 				pts := timeDec.Decode(rawPTS)
-				// pass the access unit to the HLS muxer
 				err := mux.WriteH26x(time.Now(), pts, au)
 				if err != nil {
 					log.Panic(err)
 				}
 				return nil
 			})
-			log.Println("H264 FOUND")
-
 			VideoFound = true
 		}
 		if _, ok := track.Codec.(*mpegts.CodecOpus); ok {
@@ -97,12 +85,11 @@ func Stream() {
 				pts := timeDec.Decode(rawPTS)
 				err := mux.WriteOpus(time.Now(), pts, aus)
 				if err != nil {
-					log.Panic(err)
+					return err
 				}
 				return nil
 			})
 			AudioFound = true
-			log.Println("OPUS FOUND")
 		}
 		if !VideoFound || !AudioFound {
 			log.Println("H264 OR OPUS NOT FOUND")
@@ -110,14 +97,11 @@ func Stream() {
 			break
 		}
 	}
-
-	// read from the MPEG-TS stream
-	log.Println("Stream started")
+	log.Println("stream started")
 	for {
 		err := r.Read()
 		if err != nil {
-			log.Println("stream disconnected, waiting...")
-			time.Sleep(5 * time.Second)
+			return errors.New("stream source disconnected")
 		}
 	}
 }
