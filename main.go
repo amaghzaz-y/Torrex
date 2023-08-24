@@ -1,20 +1,21 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	_ "net/http/pprof"
 
-	"github.com/amaghzaz-y/torrex/internal/scraper"
+	"github.com/amaghzaz-y/torrex/internal/server"
 )
 
 func main() {
-	link, err := scraper.FetchMovieLink("spider man homecoming")
-	if err != nil {
-		panic(err)
-	}
-	mag, err := scraper.FetchMovieMagnet(link)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(mag)
+	log.Fatalln(server.DefaultServer().Start())
+	// link, err := scraper.FetchMovieLink("spider man homecoming")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// mag, err := scraper.FetchMovieMagnet(link)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println(mag)
 }

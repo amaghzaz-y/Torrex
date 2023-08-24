@@ -20,7 +20,7 @@ type HlsStream struct {
 	pc   net.PacketConn
 }
 
-func NewStream(name string, port string) *HlsStream {
+func NewHlsStream(name string, port string) *HlsStream {
 	mux := &gohlslib.Muxer{
 		VideoTrack: &gohlslib.Track{
 			Codec: &codecs.H264{},
@@ -48,7 +48,7 @@ func (s *HlsStream) openHlsMuxer() {
 }
 
 func (s *HlsStream) openMpegReader() {
-	uri := fmt.Sprintf("127.0.0.1:%s", s.port)
+	uri := fmt.Sprintf("localhost:%s", s.port)
 	pc, err := net.ListenPacket("udp", uri)
 	if err != nil {
 		log.Fatalln("error listening to socket", err)
@@ -91,9 +91,11 @@ func (s *HlsStream) openMpegDecoder() {
 			break
 		}
 	}
+	log.Println("hls transcoder started for", s.name, "on port", s.port)
 }
 
 func (s *HlsStream) readMpegStream() {
+	log.Println("hls stream started for", s.name, "on port", s.port)
 	for {
 		defer func() {
 			if err := recover(); err != nil {
@@ -103,12 +105,14 @@ func (s *HlsStream) readMpegStream() {
 		}()
 		err := s.mpeg.Read()
 		if err != nil {
-			return
+			break
 		}
 	}
+	log.Println("hls stream finished for", s.name, "on port", s.port)
 }
 
 func (s *HlsStream) Stream() {
+	// defer s.Close()
 	s.openHlsMuxer()
 	s.openMpegReader()
 	s.openMpegDecoder()

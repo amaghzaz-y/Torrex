@@ -19,7 +19,8 @@ func NewMpegStream(uri string, port string) *MpegStream {
 }
 
 func (m *MpegStream) Stream() {
-	udp := fmt.Sprintf("udp://127.0.0.1:%s", m.port)
+	// pkg_size=1316 is important for mpeg reader
+	udp := fmt.Sprintf("udp://127.0.0.1:%s?pkt_size=1316", m.port)
 	cmd := exec.Command("ffmpeg",
 		"-re", "-i", m.uri, // input file
 		"-c:v", "libx264", "-b:v", "600k", //video config
@@ -27,7 +28,9 @@ func (m *MpegStream) Stream() {
 		"-preset", "ultrafast", //preset and fine tuning
 		"-f", "mpegts", udp, // output pipeline
 	)
+	defer cmd.Cancel()
 	log.Println("running:", cmd.String())
+	log.Println("starting mpeg streaming", m.uri, "on port", m.port)
 	err := cmd.Run()
 	if err != nil {
 		log.Fatalln("error: cannot start mpeg-ts udp streaming :", err)
