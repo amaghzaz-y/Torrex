@@ -5,6 +5,7 @@ go 1.19
 require github.com/anacrolix/torrent v1.52.5
 
 require (
+	github.com/StalkR/imdb v1.0.15 // indirect
 	github.com/abema/go-mp4 v0.12.0 // indirect
 	github.com/aler9/writerseeker v1.1.0 // indirect
 	github.com/asticode/go-astikit v0.30.0 // indirect

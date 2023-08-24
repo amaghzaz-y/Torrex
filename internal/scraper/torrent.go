@@ -12,7 +12,12 @@ var rarbg = []string{"https://www.rarbgproxy.to/search/?search=", "&order=seeder
 
 const rarbg_host = "https://www.rarbgproxy.to"
 
-func FetchMovieLink(query string) (string, error) {
+type RARBG struct{}
+
+func Torrent() *RARBG {
+	return &RARBG{}
+}
+func (*RARBG) FetchMovieLink(query string) (string, error) {
 	query = strings.ReplaceAll(query, " ", "+")
 	url := fmt.Sprintf("%s%s%s", rarbg[0], query, rarbg[1])
 	res, err := http.DefaultClient.Get(url)
@@ -30,7 +35,7 @@ func FetchMovieLink(query string) (string, error) {
 	return url, nil
 }
 
-func FetchMovieMagnet(movielink string) (string, error) {
+func (*RARBG) FetchMovieMagnet(movielink string) (string, error) {
 	res, err := http.DefaultClient.Get(movielink)
 	if err != nil {
 		return "", err
