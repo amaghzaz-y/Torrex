@@ -18,6 +18,18 @@ func Info() *LTBXD {
 	return &LTBXD{}
 }
 
+type MovieInfo struct {
+	Title       string
+	TagLine     string
+	Year        string
+	Description string
+	Poster      string
+	Trailer     string
+	BgImg       string
+	Score       string
+	Url         string
+}
+
 func (*LTBXD) FetchMovieInfoLink(query string) (string, error) {
 	query = strings.ReplaceAll(query, " ", "+")
 	url := fmt.Sprintf("%s%s", letterboxd, query)
@@ -36,4 +48,36 @@ func (*LTBXD) FetchMovieInfoLink(query string) (string, error) {
 	}
 	link = fmt.Sprintf("%s%s", letterboxd_host, link)
 	return link, nil
+}
+
+func (*LTBXD) FetchMovieInfo(movielink string) (*MovieInfo, error) {
+	res, err := http.DefaultClient.Get(movielink)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	bg, _ := doc.Find("#backdrop").Attr("data-backdrop")
+	frame, _ := doc.Find("#poster-zoom").Find("img").First().Attr("src")
+	title := doc.Find("#featured-film-header").Find("h1").First().Text()
+	year := doc.Find("#featured-film-header").Find("small").First().Text()
+	tagline := doc.Find("h4").First().Text()
+	desc := doc.Find("div .truncate").First().Text()
+	score, _ := doc.Find("meta[name='twitter:data2']").Attr("content")
+	trailer, _ := doc.Find("div .header").First().Find("a").First().Attr("href")
+	info := &MovieInfo{
+		Title:       title,
+		TagLine:     tagline,
+		Year:        year,
+		Description: strings.TrimSpace(desc),
+		Poster:      frame,
+		BgImg:       bg,
+		Trailer:     strings.TrimPrefix(trailer, "//"),
+		Score:       score,
+		Url:         movielink,
+	}
+	return info, nil
 }
