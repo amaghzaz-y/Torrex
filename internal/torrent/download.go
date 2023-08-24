@@ -23,9 +23,7 @@ func (t *Torrent) Download() {
 	}
 }
 
-
-
-func (t *Torrent) percentage() float64 {
+func (t *Torrent) Completion() float64 {
 	info := t.torrent.Info()
 	if info == nil {
 		return 0
@@ -34,5 +32,5 @@ func (t *Torrent) percentage() float64 {
 }
 
 func (t *Torrent) Ready() bool {
-	return t.percentage() > 5
+	return t.Completion() > 5
 }
