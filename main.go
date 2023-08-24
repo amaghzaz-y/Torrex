@@ -1,22 +1,23 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	_ "net/http/pprof"
 
 	"github.com/amaghzaz-y/torrex/internal/scraper"
+	"github.com/amaghzaz-y/torrex/internal/torrent"
 )
 
 func main() {
-	// log.Fatalln(server.DefaultServer().Start())
-	link, err := scraper.Info().FetchMovieInfoLink("red notice")
+	mag, err := scraper.Torrent().Magnet("Asteroid city 2023")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(link)
-	info, err := scraper.Info().FetchMovieInfo(link)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%#v\n", info)
+	torr := torrent.DefaultClient().NewTorrent("Asteroid city 2023", mag)
+	log.Println(torr.FilePath())
+	// go torr.Download()
+	// for !torr.Ready() {
+	// 	time.Sleep(5 * time.Second)
+	// }
+
 }

@@ -30,7 +30,7 @@ type MovieInfo struct {
 	Url         string
 }
 
-func (*LTBXD) FetchMovieInfoLink(query string) (string, error) {
+func (*LTBXD) fetchMovieInfoLink(query string) (string, error) {
 	query = strings.ReplaceAll(query, " ", "+")
 	url := fmt.Sprintf("%s%s", letterboxd, query)
 	res, err := http.DefaultClient.Get(url)
@@ -50,7 +50,7 @@ func (*LTBXD) FetchMovieInfoLink(query string) (string, error) {
 	return link, nil
 }
 
-func (*LTBXD) FetchMovieInfo(movielink string) (*MovieInfo, error) {
+func (*LTBXD) fetchMovieInfo(movielink string) (*MovieInfo, error) {
 	res, err := http.DefaultClient.Get(movielink)
 	if err != nil {
 		return nil, err
@@ -80,4 +80,12 @@ func (*LTBXD) FetchMovieInfo(movielink string) (*MovieInfo, error) {
 		Url:         movielink,
 	}
 	return info, nil
+}
+
+func (l *LTBXD) Movie(query string) (*MovieInfo, error) {
+	link, err := l.fetchMovieInfoLink(query)
+	if err != nil {
+		return nil, err
+	}
+	return l.fetchMovieInfo(link)
 }

@@ -17,7 +17,7 @@ type RARBG struct{}
 func Torrent() *RARBG {
 	return &RARBG{}
 }
-func (*RARBG) FetchMovieLink(query string) (string, error) {
+func (*RARBG) fetchMovieLink(query string) (string, error) {
 	query = strings.ReplaceAll(query, " ", "+")
 	url := fmt.Sprintf("%s%s%s", rarbg[0], query, rarbg[1])
 	res, err := http.DefaultClient.Get(url)
@@ -35,7 +35,7 @@ func (*RARBG) FetchMovieLink(query string) (string, error) {
 	return url, nil
 }
 
-func (*RARBG) FetchMovieMagnet(movielink string) (string, error) {
+func (*RARBG) fetchMovieMagnet(movielink string) (string, error) {
 	res, err := http.DefaultClient.Get(movielink)
 	if err != nil {
 		return "", err
@@ -47,4 +47,12 @@ func (*RARBG) FetchMovieMagnet(movielink string) (string, error) {
 	}
 	magnet, _ := doc.Find("#hvicwlo").Attr("href")
 	return magnet, nil
+}
+
+func (t *RARBG) Magnet(query string) (string, error) {
+	link, err := t.fetchMovieLink(query)
+	if err != nil {
+		return "", err
+	}
+	return t.fetchMovieMagnet(link)
 }

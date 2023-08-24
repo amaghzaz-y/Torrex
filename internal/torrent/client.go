@@ -37,13 +37,14 @@ func (c *Client) NewTorrent(title, magnet string) *Torrent {
 	torr := &Torrent{
 		client:   c.torrentClient,
 		title:    title,
-		filepath: title,
+		filepath: "",
 		port:     fmt.Sprint(rand.Intn(65536-1024) + 1024),
 		torrent:  nil,
 	}
 	select {
 	case <-t.GotInfo():
 		torr.torrent = t
+		
 		return torr
 	case <-time.After(10 * time.Second):
 		log.Println("timeout: cannot load torrent from magnet : ", title)
