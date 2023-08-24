@@ -19,15 +19,15 @@ func Info() *LTBXD {
 }
 
 type MovieInfo struct {
-	Title       string
-	TagLine     string
-	Year        string
-	Description string
-	Poster      string
-	Trailer     string
-	BgImg       string
-	Score       string
-	Url         string
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	TagLine     string `json:"tagline"`
+	Year        string `json:"year"`
+	Score       string `json:"score"`
+	Url         string `json:"url"`
+	Poster      string `json:"poster"`
+	Trailer     string `json:"trailer"`
+	BgImg       string `json:"bgimg"`
 }
 
 func (*LTBXD) fetchMovieInfoLink(query string) (string, error) {
