@@ -23,21 +23,7 @@ func (t *Torrent) Download() {
 	}
 }
 
-func (t *Torrent) FilePath() string {
-	var target *torrent.File
-	var maxSize int64
-	if len(t.filepath) != 0 {
-		return t.filepath
-	}
-	for _, file := range t.torrent.Files() {
-		if maxSize < file.Length() {
-			maxSize = file.Length()
-			target = file
-		}
-	}
-	t.filepath = target.Path()
-	return target.Path()
-}
+
 
 func (t *Torrent) percentage() float64 {
 	info := t.torrent.Info()

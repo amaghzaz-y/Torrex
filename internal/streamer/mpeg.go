@@ -11,14 +11,14 @@ type MpegStream struct {
 	port string
 }
 
-func NewMpegStream(uri string, port string) *MpegStream {
+func newMpegStream(uri string, port string) *MpegStream {
 	return &MpegStream{
 		uri,
 		port,
 	}
 }
 
-func (m *MpegStream) Stream() {
+func (m *MpegStream) stream() {
 	// pkg_size=1316 is important for mpeg reader
 	udp := fmt.Sprintf("udp://127.0.0.1:%s?pkt_size=1316", m.port)
 	cmd := exec.Command("ffmpeg",

@@ -26,6 +26,9 @@ func DefaultServer() *Server {
 		router,
 	}
 }
+func (s *Server) Handle(path string, handler http.HandlerFunc) {
+	s.router.HandleFunc(path, handler)
+}
 
 func (s *Server) Start() error {
 	go func() {

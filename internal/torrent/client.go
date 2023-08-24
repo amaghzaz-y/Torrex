@@ -44,10 +44,30 @@ func (c *Client) NewTorrent(title, magnet string) *Torrent {
 	select {
 	case <-t.GotInfo():
 		torr.torrent = t
-		
+
 		return torr
 	case <-time.After(10 * time.Second):
 		log.Println("timeout: cannot load torrent from magnet : ", title)
 		return nil
 	}
+}
+
+func (t *Torrent) UdpPort() string {
+	return t.port
+}
+
+func (t *Torrent) FilePath() string {
+	var target *torrent.File
+	var maxSize int64
+	if len(t.filepath) != 0 {
+		return t.filepath
+	}
+	for _, file := range t.torrent.Files() {
+		if maxSize < file.Length() {
+			maxSize = file.Length()
+			target = file
+		}
+	}
+	t.filepath = target.Path()
+	return target.Path()
 }

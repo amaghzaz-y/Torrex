@@ -20,7 +20,7 @@ type HlsStream struct {
 	pc   net.PacketConn
 }
 
-func NewHlsStream(name string, port string) *HlsStream {
+func newHlsStream(name string, port string) *HlsStream {
 	mux := &gohlslib.Muxer{
 		VideoTrack: &gohlslib.Track{
 			Codec: &codecs.H264{},
@@ -111,19 +111,19 @@ func (s *HlsStream) readMpegStream() {
 	log.Println("hls stream finished for", s.name, "on port", s.port)
 }
 
-func (s *HlsStream) Stream() {
-	// defer s.Close()
+func (s *HlsStream) stream() {
+	defer s.close()
 	s.openHlsMuxer()
 	s.openMpegReader()
 	s.openMpegDecoder()
 	s.readMpegStream()
 }
 
-func (s *HlsStream) Close() {
+func (s *HlsStream) close() {
 	s.hls.Close()
 	s.pc.Close()
 }
 
-func (s *HlsStream) Handler() http.HandlerFunc {
+func (s *HlsStream) handler() http.HandlerFunc {
 	return s.hls.Handle
 }

@@ -5,22 +5,16 @@ import (
 	"net/http"
 )
 
-type Streamer struct {
-	streams []*HlsStream
-}
+type Streamer struct{}
 
 func NewStreamer() *Streamer {
 	return &Streamer{}
 }
 
-func (s *Streamer) AddStream(stream *HlsStream) {
-	s.streams = append(s.streams, stream)
-}
-
-func (s *Streamer) Test() http.HandlerFunc {
-	mpeg := NewMpegStream("Looney/Looney.mkv", "9000")
-	hls := NewHlsStream("Lonney", "9000")
-	go mpeg.Stream()
-	go hls.Stream()
-	return hls.Handler()
+func (s *Streamer) BootstrapStream(title string, path string, port string) http.HandlerFunc {
+	mpeg := newMpegStream(path, port)
+	hls := newHlsStream(title, port)
+	go mpeg.stream()
+	go hls.stream()
+	return hls.handler()
 }
