@@ -5,5 +5,13 @@ import (
 )
 
 type Streamer struct {
-	Streams []Stream
+	streams []*HlsStream
+}
+
+func NewStreamer() *Streamer {
+	return &Streamer{}
+}
+
+func (s *Streamer) AddStream(stream *HlsStream) {
+	s.streams = append(s.streams, stream)
 }

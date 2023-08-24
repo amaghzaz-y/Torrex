@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"time"
 
 	"github.com/bluenviron/gohlslib"
@@ -11,7 +12,7 @@ import (
 	"github.com/bluenviron/mediacommon/pkg/formats/mpegts"
 )
 
-type Stream struct {
+type HlsStream struct {
 	name string
 	port string
 	hls  *gohlslib.Muxer
@@ -19,7 +20,7 @@ type Stream struct {
 	pc   net.PacketConn
 }
 
-func NewStream(name string, port string) *Stream {
+func NewStream(name string, port string) *HlsStream {
 	mux := &gohlslib.Muxer{
 		VideoTrack: &gohlslib.Track{
 			Codec: &codecs.H264{},
@@ -30,7 +31,7 @@ func NewStream(name string, port string) *Stream {
 			},
 		},
 	}
-	return &Stream{
+	return &HlsStream{
 		name,
 		port,
 		mux,
@@ -39,14 +40,14 @@ func NewStream(name string, port string) *Stream {
 	}
 }
 
-func (s *Stream) openHlsMuxer() {
+func (s *HlsStream) openHlsMuxer() {
 	err := s.hls.Start()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (s *Stream) openMpegReader() {
+func (s *HlsStream) openMpegReader() {
 	uri := fmt.Sprintf("127.0.0.1:%s", s.port)
 	pc, err := net.ListenPacket("udp", uri)
 	if err != nil {
@@ -60,7 +61,7 @@ func (s *Stream) openMpegReader() {
 	s.pc = pc
 }
 
-func (s *Stream) openMpegDecoder() {
+func (s *HlsStream) openMpegDecoder() {
 	var timeDec *mpegts.TimeDecoder
 	VideoFound, AudioFound := false, false
 	for _, track := range s.mpeg.Tracks() {
@@ -92,7 +93,7 @@ func (s *Stream) openMpegDecoder() {
 	}
 }
 
-func (s *Stream) readMpegStream() {
+func (s *HlsStream) readMpegStream() {
 	for {
 		defer func() {
 			if err := recover(); err != nil {
@@ -107,14 +108,18 @@ func (s *Stream) readMpegStream() {
 	}
 }
 
-func (s *Stream) Stream() {
+func (s *HlsStream) Stream() {
 	s.openHlsMuxer()
 	s.openMpegReader()
 	s.openMpegDecoder()
 	s.readMpegStream()
 }
 
-func (s *Stream) Close() {
+func (s *HlsStream) Close() {
 	s.hls.Close()
 	s.pc.Close()
+}
+
+func (s *HlsStream) Handler() http.HandlerFunc {
+	return s.hls.Handle
 }
