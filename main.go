@@ -22,7 +22,7 @@ func main() {
 	go torr.Download()
 	log.Println("torrent download started")
 	for !torr.Ready() {
-		log.Println("waiting for stream to be ready")
+		log.Println("waiting for stream to be ready :", torr.Completion())
 		time.Sleep(5 * time.Second)
 	}
 	log.Println("stream is ready")
