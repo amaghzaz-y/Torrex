@@ -39,4 +39,5 @@ func (m *MpegStream) stream() {
 	if err != nil {
 		log.Fatalln("error: cannot start mpeg-ts udp streaming :", err)
 	}
+	log.Println("finished mpeg streaming", m.uri, "on port", m.port)
 }
