@@ -107,7 +107,7 @@ func (s *Stream) readMpegStream() {
 	}
 }
 
-func (s *Stream) Start() {
+func (s *Stream) Stream() {
 	s.openHlsMuxer()
 	s.openMpegReader()
 	s.openMpegDecoder()
