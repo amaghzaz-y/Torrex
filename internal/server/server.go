@@ -20,7 +20,7 @@ func DefaultServer() *Server {
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
-		// MaxAge:           300,
+		MaxAge:           300,
 	}))
 	return &Server{
 		router,
@@ -28,7 +28,7 @@ func DefaultServer() *Server {
 }
 
 func (s *Server) Start() error {
-	go s.stream()
+	// go s.stream()
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()

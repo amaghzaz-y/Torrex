@@ -1,19 +1,25 @@
-package server
+package streamer
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"time"
-
-	_ "embed"
 
 	"github.com/bluenviron/gohlslib"
 	"github.com/bluenviron/gohlslib/pkg/codecs"
 	"github.com/bluenviron/mediacommon/pkg/formats/mpegts"
 )
 
-func (s *Server) stream() {
-	// create the HLS muxer
+type Stream struct {
+	name string
+	port string
+	hls  *gohlslib.Muxer
+	mpeg *mpegts.Reader
+	pc   net.PacketConn
+}
+
+func NewStream(name string, port string) *Stream {
 	mux := &gohlslib.Muxer{
 		VideoTrack: &gohlslib.Track{
 			Codec: &codecs.H264{},
@@ -24,48 +30,58 @@ func (s *Server) stream() {
 			},
 		},
 	}
-	err := mux.Start()
+	return &Stream{
+		name,
+		port,
+		mux,
+		nil,
+		nil,
+	}
+}
+
+func (s *Stream) startHLSM() {
+	err := s.hls.Start()
 	if err != nil {
 		panic(err)
 	}
+}
 
-	s.router.HandleFunc("/*", mux.Handle)
-
-	// create a socket to receive MPEG-TS packets
-	pc, err := net.ListenPacket("udp", "localhost:9000")
+func (s *Stream) openMpegReader() {
+	uri := fmt.Sprintf("127.0.0.1:%s", s.port)
+	pc, err := net.ListenPacket("udp", uri)
 	if err != nil {
-		panic(err)
+		log.Fatalln("error listening to socket", err)
 	}
-	defer pc.Close()
-
-	// create a MPEG-TS reader
 	r, err := mpegts.NewReader(mpegts.NewBufferedReader(newPacketConnReader(pc)))
 	if err != nil {
 		log.Fatalln("error reading mpeg-ts", err)
 	}
+	s.mpeg = r
+	s.pc = pc
+}
 
+func (s *Stream) decodeMpegStream() {
 	var timeDec *mpegts.TimeDecoder
-
 	VideoFound, AudioFound := false, false
-	for _, track := range r.Tracks() {
+	for _, track := range s.mpeg.Tracks() {
 		if _, ok := track.Codec.(*mpegts.CodecH264); ok {
-			r.OnDataH26x(track, func(rawPTS int64, _ int64, au [][]byte) error {
+			s.mpeg.OnDataH26x(track, func(rawPTS int64, _ int64, au [][]byte) error {
 				if timeDec == nil {
 					timeDec = mpegts.NewTimeDecoder(rawPTS)
 				}
 				pts := timeDec.Decode(rawPTS)
-				mux.WriteH26x(time.Now(), pts, au)
+				s.hls.WriteH26x(time.Now(), pts, au)
 				return nil
 			})
 			VideoFound = true
 		}
 		if _, ok := track.Codec.(*mpegts.CodecOpus); ok {
-			r.OnDataOpus(track, func(rawPTS int64, aus [][]byte) error {
+			s.mpeg.OnDataOpus(track, func(rawPTS int64, aus [][]byte) error {
 				if timeDec == nil {
 					timeDec = mpegts.NewTimeDecoder(rawPTS)
 				}
 				pts := timeDec.Decode(rawPTS)
-				mux.WriteOpus(time.Now(), pts, aus)
+				s.hls.WriteOpus(time.Now(), pts, aus)
 				return nil
 			})
 			AudioFound = true
@@ -76,7 +92,9 @@ func (s *Server) stream() {
 			break
 		}
 	}
-	log.Println("stream started")
+}
+
+func (s *Stream) Read() {
 	for {
 		defer func() {
 			if err := recover(); err != nil {
@@ -84,10 +102,21 @@ func (s *Server) stream() {
 				return
 			}
 		}()
-		err := r.Read()
+		err := s.mpeg.Read()
 		if err != nil {
 			break
 		}
 	}
-	log.Println("stream finished")
+}
+
+func (s *Stream) Start() {
+	s.startHLSM()
+	s.openMpegReader()
+	s.decodeMpegStream()
+	s.Read()
+}
+
+func (s *Stream) Close() {
+	s.hls.Close()
+	s.pc.Close()
 }
