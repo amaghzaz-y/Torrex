@@ -39,7 +39,7 @@ func NewStream(name string, port string) *Stream {
 	}
 }
 
-func (s *Stream) startHLSM() {
+func (s *Stream) openHlsMuxer() {
 	err := s.hls.Start()
 	if err != nil {
 		panic(err)
@@ -60,7 +60,7 @@ func (s *Stream) openMpegReader() {
 	s.pc = pc
 }
 
-func (s *Stream) decodeMpegStream() {
+func (s *Stream) openMpegDecoder() {
 	var timeDec *mpegts.TimeDecoder
 	VideoFound, AudioFound := false, false
 	for _, track := range s.mpeg.Tracks() {
@@ -86,15 +86,13 @@ func (s *Stream) decodeMpegStream() {
 			})
 			AudioFound = true
 		}
-		if !VideoFound || !AudioFound {
-			log.Println("H264 OR OPUS NOT FOUND")
-		} else {
+		if VideoFound && AudioFound {
 			break
 		}
 	}
 }
 
-func (s *Stream) Read() {
+func (s *Stream) readMpegStream() {
 	for {
 		defer func() {
 			if err := recover(); err != nil {
@@ -104,16 +102,16 @@ func (s *Stream) Read() {
 		}()
 		err := s.mpeg.Read()
 		if err != nil {
-			break
+			return
 		}
 	}
 }
 
 func (s *Stream) Start() {
-	s.startHLSM()
+	s.openHlsMuxer()
 	s.openMpegReader()
-	s.decodeMpegStream()
-	s.Read()
+	s.openMpegDecoder()
+	s.readMpegStream()
 }
 
 func (s *Stream) Close() {
