@@ -17,7 +17,8 @@ export default defineConfig({
         colors: {
             torrex: {
                 primary: 'rgba(136, 6, 37, 20%)',
-                secondary: 'rbga(190,190,190,5%)',
+                navbar: '#1E0108',
+                secondary: 'rgba(190, 190, 190, 5%)',
                 accent: '#CF0031',
                 background: 'rgba(15,0,5,100%)',
                 text: 'rgba(205,220,220,80%)',
@@ -45,8 +46,5 @@ export default defineConfig({
             },
         }),
     ],
-    transformers: [
-        transformerDirectives(),
-        transformerVariantGroup(),
-    ],
+    transformers: [transformerDirectives(), transformerVariantGroup()],
 })
