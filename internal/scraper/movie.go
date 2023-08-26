@@ -66,7 +66,10 @@ func (*LTBXD) fetchMovieInfo(movielink string) (MovieInfo, error) {
 	year := doc.Find("#featured-film-header").Find("small").First().Text()
 	tagline := doc.Find("h4").First().Text()
 	desc := doc.Find("div .truncate").First().Text()
-	score, _ := doc.Find("meta[name='twitter:data2']").Attr("content")
+	score, found := doc.Find("span[class='twitter:data2']").Attr("content")
+	if found {
+		score = strings.Split(score, "out")[0]
+	}
 	trailer, _ := doc.Find("div .header").First().Find("a").First().Attr("href")
 	info := MovieInfo{
 		Title:       title,

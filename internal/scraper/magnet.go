@@ -30,6 +30,9 @@ func (*RARBG) fetchMovieLink(query string) (string, error) {
 		return "", err
 	}
 	x := doc.Find("tr .table2ta_rarbgproxy").Children().Filter("td .tlista_rarbgproxy").Children().Filter("a")
+	if len(x.Nodes) < 2 {
+		return "", fmt.Errorf("magnet not found")
+	}
 	url = x.Nodes[1].Attr[0].Val
 	url = fmt.Sprintf("%s%s", rarbg_host, url)
 	return url, nil

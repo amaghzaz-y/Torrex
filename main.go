@@ -24,7 +24,6 @@ func main() {
 	// log.Println("stream is ready")
 	// handler := streamer.NewStreamer().BootstrapStream("Asteroid city 2023", torr.FilePath(), torr.UdpPort())
 	// log.Println("stream is boostrapped")
-	server := api.New()
 	log.Println("server started")
-	log.Fatalln(server.Start())
+	api.Start()
 }

@@ -1,12 +1,11 @@
 package api
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/amaghzaz-y/torrex/internal/scraper"
-	"github.com/go-chi/chi/v5"
+	"github.com/gofiber/fiber/v2"
 )
 
 type SearchResponse struct {
@@ -14,12 +13,10 @@ type SearchResponse struct {
 	Magnet string            `json:"magnet"`
 }
 
-func SearchHandler(w http.ResponseWriter, r *http.Request) {
-	queryParam := chi.URLParam(r, "query")
+func SearchHandler(c *fiber.Ctx) error {
+	queryParam := c.Params("query")
 	if queryParam == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("error: bad request" + queryParam))
-		return
+		return c.Status(http.StatusBadRequest).SendString("invalid request")
 	}
 	magnetChan := make(chan string)
 	infoChan := make(chan scraper.MovieInfo)
@@ -34,7 +31,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	go func(query string) {
 		res, err := scraper.Info().Movie(query)
 		if err != nil {
-			log.Println("error searching for magnet :", query)
+			log.Println("error searching for movie info :", query)
 			infoChan <- scraper.MovieInfo{}
 		}
 		infoChan <- res
@@ -45,11 +42,5 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		info,
 		magnet,
 	}
-	payload, err := json.Marshal(&res)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(200)
-	w.Write(payload)
+	return c.JSON(res)
 }

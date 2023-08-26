@@ -4,41 +4,33 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/cors"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cache"
+	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
+	"github.com/gofiber/fiber/v2/middleware/idempotency"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-type API struct {
-	router *chi.Mux
-}
-
-func New() *API {
-	r := chi.NewRouter()
-	r.Use(middleware.RequestID)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.URLFormat)
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
-		MaxAge:           300,
-	}))
-	return &API{
-		r,
-	}
-}
-func (a *API) Handle(path string, handler http.HandlerFunc) {
-	a.router.HandleFunc(path, handler)
-}
-
-func (a *API) Start() error {
-	a.router.HandleFunc("/search/{query}", SearchHandler)
+func Start() {
+	app := fiber.New()
+	app.Use(cache.New())
+	app.Use(compress.New())
+	app.Use(cors.New())
+	app.Use(csrf.New())
+	app.Use(helmet.New())
+	app.Use(idempotency.New())
+	// app.Use(limiter.New())
+	app.Use(logger.New())
+	app.Use(recover.New())
+	app.Get("/metrics", monitor.New())
+	app.Get("/search/:query", SearchHandler)
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
-	return http.ListenAndServe("127.0.0.1:4000", a.router)
+	app.Listen(":4000")
 }
