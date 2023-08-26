@@ -12,7 +12,7 @@ type SearchResponse struct {
 	Magnet string            `json:"magnet"`
 }
 
-func SearchHandler(c *fiber.Ctx) error {
+func searchHandler(c *fiber.Ctx) error {
 	queryParam := c.Params("query")
 	if queryParam == "" {
 		return c.Status(http.StatusBadRequest).SendString("invalid request")
