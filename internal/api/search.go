@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/amaghzaz-y/torrex/internal/scraper"
@@ -23,7 +22,6 @@ func SearchHandler(c *fiber.Ctx) error {
 	go func(query string) {
 		res, err := scraper.Torrent().Magnet(query)
 		if err != nil {
-			log.Println("error searching for magnet :", query)
 			magnetChan <- ""
 		}
 		magnetChan <- res
@@ -31,13 +29,15 @@ func SearchHandler(c *fiber.Ctx) error {
 	go func(query string) {
 		res, err := scraper.Info().Movie(query)
 		if err != nil {
-			log.Println("error searching for movie info :", query)
 			infoChan <- scraper.MovieInfo{}
 		}
 		infoChan <- res
 	}(queryParam)
 	info := <-infoChan
 	magnet := <-magnetChan
+	if info.Title == "" || magnet == "" {
+		return c.SendStatus(404)
+	}
 	res := &SearchResponse{
 		info,
 		magnet,

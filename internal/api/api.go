@@ -27,7 +27,7 @@ func Start() {
 	// app.Use(limiter.New())
 	app.Use(logger.New())
 	app.Use(recover.New())
-	app.Get("/metrics", monitor.New())
+	app.Get("/metrics", monitor.New(monitor.Config{Title: "Torrex Metrics"}))
 	app.Get("/search/:query", SearchHandler)
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
