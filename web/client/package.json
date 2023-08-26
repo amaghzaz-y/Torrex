@@ -20,6 +20,8 @@
   "dependencies": {
     "@solidjs/meta": "^0.28.5",
     "@solidjs/router": "^0.8.2",
+    "hls.js": "^1.4.10",
+    "plyr": "^3.7.8",
     "solid-icons": "^1.0.11",
     "solid-js": "^1.7.11",
     "solid-start": "^0.3.4"

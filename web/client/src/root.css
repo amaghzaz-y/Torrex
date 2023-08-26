@@ -17,3 +17,9 @@
 ::-webkit-scrollbar-thumb:hover {
 	background: #202020;
 }
+
+a {
+	text-decoration-style: none;
+	text-decoration-line: none;
+	color: rgba(205, 220, 220, 80%);
+}
