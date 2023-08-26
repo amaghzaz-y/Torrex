@@ -8,8 +8,10 @@
   "type": "module",
   "devDependencies": {
     "@types/node": "^18.16.19",
+    "@unocss/preset-web-fonts": "^0.55.3",
     "esbuild": "^0.14.54",
     "postcss": "^8.4.26",
+    "prettier": "3.0.2",
     "solid-start-node": "^0.3.0",
     "typescript": "^4.9.5",
     "unocss": "^0.55.3",
@@ -18,6 +20,7 @@
   "dependencies": {
     "@solidjs/meta": "^0.28.5",
     "@solidjs/router": "^0.8.2",
+    "solid-icons": "^1.0.11",
     "solid-js": "^1.7.11",
     "solid-start": "^0.3.4"
   },
