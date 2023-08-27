@@ -3,13 +3,14 @@ package api
 import (
 	"net/http"
 
+	model "github.com/amaghzaz-y/torrex/internal/models"
 	"github.com/amaghzaz-y/torrex/internal/scraper"
 	"github.com/gofiber/fiber/v2"
 )
 
 type SearchResponse struct {
-	Movie  scraper.MovieInfo `json:"movie"`
-	Magnet string            `json:"magnet"`
+	Movie  model.Movie `json:"movie"`
+	Magnet string          `json:"magnet"`
 }
 
 func searchHandler(c *fiber.Ctx) error {
@@ -18,7 +19,7 @@ func searchHandler(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString("invalid request")
 	}
 	magnetChan := make(chan string)
-	infoChan := make(chan scraper.MovieInfo)
+	infoChan := make(chan model.Movie)
 	go func(query string) {
 		res, err := scraper.Torrent().Magnet(query)
 		if err != nil {
@@ -29,7 +30,7 @@ func searchHandler(c *fiber.Ctx) error {
 	go func(query string) {
 		res, err := scraper.Info().Movie(query)
 		if err != nil {
-			infoChan <- scraper.MovieInfo{}
+			infoChan <- model.Movie{}
 		}
 		infoChan <- res
 	}(queryParam)

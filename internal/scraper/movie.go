@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	model "github.com/amaghzaz-y/torrex/internal/models"
 )
 
 const letterboxd = "https://letterboxd.com/search/"
@@ -16,18 +17,6 @@ type LTBXD struct{}
 
 func Info() *LTBXD {
 	return &LTBXD{}
-}
-
-type MovieInfo struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	TagLine     string `json:"tagline"`
-	Year        string `json:"year"`
-	Score       string `json:"score"`
-	Url         string `json:"url"`
-	Poster      string `json:"poster"`
-	Trailer     string `json:"trailer"`
-	BgImg       string `json:"bgimg"`
 }
 
 func (*LTBXD) fetchMovieInfoLink(query string) (string, error) {
@@ -49,16 +38,15 @@ func (*LTBXD) fetchMovieInfoLink(query string) (string, error) {
 	link = fmt.Sprintf("%s%s", letterboxd_host, link)
 	return link, nil
 }
-
-func (*LTBXD) fetchMovieInfo(movielink string) (MovieInfo, error) {
+func (*LTBXD) fetchMovieInfo(movielink string) (model.Movie, error) {
 	res, err := http.DefaultClient.Get(movielink)
 	if err != nil {
-		return MovieInfo{}, err
+		return model.Movie{}, err
 	}
 	defer res.Body.Close()
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return MovieInfo{}, err
+		return model.Movie{}, err
 	}
 	bg, _ := doc.Find("#backdrop").Attr("data-backdrop")
 	frame, _ := doc.Find("#poster-zoom").Find("img").First().Attr("src")
@@ -71,7 +59,7 @@ func (*LTBXD) fetchMovieInfo(movielink string) (MovieInfo, error) {
 		score = strings.Split(score, "out")[0]
 	}
 	trailer, _ := doc.Find("div .header").First().Find("a").First().Attr("href")
-	info := MovieInfo{
+	info := model.Movie{
 		Title:       title,
 		TagLine:     tagline,
 		Year:        year,
@@ -85,10 +73,10 @@ func (*LTBXD) fetchMovieInfo(movielink string) (MovieInfo, error) {
 	return info, nil
 }
 
-func (l *LTBXD) Movie(query string) (MovieInfo, error) {
+func (l *LTBXD) Movie(query string) (model.Movie, error) {
 	link, err := l.fetchMovieInfoLink(query)
 	if err != nil {
-		return MovieInfo{}, err
+		return model.Movie{}, err
 	}
 	return l.fetchMovieInfo(link)
 }
