@@ -1,10 +1,7 @@
-import { AiFillPlayCircle, AiOutlineYoutube } from 'solid-icons/ai'
-import {
-    RiMediaPlayFill,
-    RiMediaPlayMiniFill,
-    RiMediaPlayMiniLine,
-} from 'solid-icons/ri'
-export default function () {
+import { AiOutlineYoutube } from 'solid-icons/ai'
+import { RiMediaPlayMiniLine } from 'solid-icons/ri'
+import { Movie } from '~/types/movie'
+export default function ({ movie }: { movie: Movie }) {
     return (
         <div class="opacity-80 flex w-full h-60 bg-torrex-secondary rounded-3 hover:opacity-100 cursor-default">
             <img
@@ -13,15 +10,11 @@ export default function () {
             />
             <div class="flex justify-between flex-col p-5 flex-gap-2 w-full">
                 <div class="flex items-center font-bold flex-gap-10 font-size-6">
-                    Scrapper
-                    <text class="font-size-5 font-300">2023</text>
+                    {movie.title}
+                    <text class="font-size-5 font-300">{movie.year}</text>
                 </div>
                 <text class="font-size-4 text-justify w-full line-clamp-3">
-                    Living alone since her beloved mum died, 12-year-old
-                    Georgie fills the flat they shared with her own special
-                    magic. But when her absent father Jason turns up out of
-                    the blue, she’s forced to confront reality. Living
-                    alone since her beloved mum died, 12-year-old Georgie
+                    {movie.description}
                 </text>
                 <div class="flex flex-gap-2 place-self-end ">
                     <button

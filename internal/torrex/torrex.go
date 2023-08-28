@@ -1,6 +1,7 @@
 package torrex
 
 import (
+	"errors"
 	"time"
 
 	model "github.com/amaghzaz-y/torrex/internal/models"
@@ -11,9 +12,10 @@ import (
 )
 
 type Torrex struct {
-	Streamer *streamer.Streamer
-	Store    *store.Store
-	Torrent  *torrent.Client
+	Streamer    *streamer.Streamer
+	Store       *store.Store
+	Torrent     *torrent.Client
+	ActiveRooms map[string]*model.Room
 }
 
 func New() *Torrex {
@@ -24,18 +26,28 @@ func New() *Torrex {
 		streamer,
 		store,
 		torrent,
+		make(map[string]*model.Room, 10),
 	}
 }
 func (t *Torrex) Close() {
 	t.Store.Close()
 	t.Torrent.Close()
 }
-func (t *Torrex) NewPipelineHandler(room *model.Room) echo.HandlerFunc {
+
+func (t *Torrex) NewPipelineHandler(room *model.Room) (echo.HandlerFunc, error) {
+	if len(t.ActiveRooms) >= 10 {
+		return nil, errors.New("unsufficient resources to handle more streams")
+	}
 	torr := t.Torrent.NewTorrent(room.Movie.Title, room.Magnet)
 	go torr.Download()
 	for !torr.Ready() {
-		time.Sleep(5 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
-	handler := t.Streamer.Stream("Asteroid city 2023", torr.FilePath(), torr.UdpPort())
-	return echo.WrapHandler(handler)
+	handler, flag := t.Streamer.Stream(room.Movie.Title, torr.FilePath(), torr.UdpPort())
+	t.ActiveRooms[room.Id] = room
+	go func() {
+		<-flag
+		delete(t.ActiveRooms, room.Id)
+	}()
+	return echo.WrapHandler(handler), nil
 }

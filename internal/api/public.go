@@ -9,7 +9,17 @@ import (
 	nanoid "github.com/matoous/go-nanoid"
 )
 
+// GET /rooms
+func (a *Api) RoomListHandler(c echo.Context) error {
+	var r []*model.Room
+	for _, v := range a.ActiveRooms {
+		r = append(r, v)
+	}
+	return c.JSON(200, r)
+}
+
 // returns model.Room as json
+// GET /search/:query
 func (a *Api) searchHandler(c echo.Context) error {
 	queryParam := c.Param("query")
 	if queryParam == "" {

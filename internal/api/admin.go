@@ -18,7 +18,10 @@ func (a *Api) NewRoomHanlder(c echo.Context) error {
 	if err != nil {
 		return c.String(404, "room not found")
 	}
-	handler := a.NewPipelineHandler(room)
+	handler, err := a.NewPipelineHandler(room)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
 	a.server.GET(fmt.Sprintf("/stream/%s/*", room.Id), handler)
 	return c.JSON(200, fmt.Sprintf("/stream/%s/*", room.Id))
 }
