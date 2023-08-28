@@ -4,20 +4,21 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/labstack/echo/v4"
 )
 
 // GET admin/room/new/:id
-func (a *Api) NewRoomHanlder(c *fiber.Ctx) error {
-	roomId := c.Params("id")
+func (a *Api) NewRoomHanlder(c echo.Context) error {
+	roomId := c.Param("id")
 	if roomId == "" {
-		return c.Status(http.StatusBadRequest).SendString("room id is null")
+		c.Logger().Print(roomId)
+		return c.String(http.StatusBadRequest, "room id is null")
 	}
 	room, err := a.Store.GetRoom(roomId)
 	if err != nil {
-		return c.Status(404).SendString("room not found")
+		return c.String(404, "room not found")
 	}
 	handler := a.NewPipelineHandler(room)
-	a.server.Get(fmt.Sprintf("/%s", room.Id), handler)
-	return c.SendString(fmt.Sprintf("/%s", room.Id))
+	a.server.GET(fmt.Sprintf("/stream/%s/*", room.Id), handler)
+	return c.JSON(200, fmt.Sprintf("/stream/%s/*", room.Id))
 }

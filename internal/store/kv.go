@@ -10,12 +10,8 @@ type Store struct {
 	*bbolt.DB
 }
 
-func New(path ...string) *Store {
-	if path == nil {
-		path[0] = "torrex.data"
-	}
-	log.Println(path[0])
-	db, err := bbolt.Open(path[0], 0600, nil)
+func New(path string) *Store {
+	db, err := bbolt.Open(path, 0600, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}

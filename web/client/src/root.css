@@ -23,3 +23,16 @@ a {
 	text-decoration-line: none;
 	color: rgba(205, 220, 220, 80%);
 }
+
+.plyr__progress {
+	display: none;
+	pointer-events: none;
+}
+
+.plyr__time {
+	display: none;
+}
+
+.plyr__control {
+	display: none;
+}

@@ -5,15 +5,15 @@ import (
 
 	model "github.com/amaghzaz-y/torrex/internal/models"
 	"github.com/amaghzaz-y/torrex/internal/scraper"
-	"github.com/gofiber/fiber/v2"
+	"github.com/labstack/echo/v4"
 	nanoid "github.com/matoous/go-nanoid"
 )
 
 // returns model.Room as json
-func (a *Api) searchHandler(c *fiber.Ctx) error {
-	queryParam := c.Params("query")
+func (a *Api) searchHandler(c echo.Context) error {
+	queryParam := c.Param("query")
 	if queryParam == "" {
-		return c.Status(http.StatusBadRequest).SendString("invalid request")
+		return c.String(http.StatusBadRequest, "invalid request")
 	}
 	magnetChan := make(chan string)
 	movieChan := make(chan model.Movie)
@@ -34,11 +34,11 @@ func (a *Api) searchHandler(c *fiber.Ctx) error {
 	movie := <-movieChan
 	magnet := <-magnetChan
 	if movie.Title == "" || magnet == "" {
-		return c.SendStatus(404)
+		return c.NoContent(404)
 	}
-	id, err := nanoid.Nanoid(32)
+	id, err := nanoid.Nanoid(12)
 	if err != nil {
-		return c.SendStatus(502)
+		return c.NoContent(502)
 	}
 	res := model.Room{
 		Id:     id,
@@ -47,11 +47,11 @@ func (a *Api) searchHandler(c *fiber.Ctx) error {
 	}
 	err = a.Store.UpsertMovie(magnet, &movie)
 	if err != nil {
-		return c.SendStatus(502)
+		return c.NoContent(502)
 	}
 	err = a.Store.UpsertRoom(&res)
 	if err != nil {
-		return c.SendStatus(502)
+		return c.NoContent(502)
 	}
-	return c.JSON(res)
+	return c.JSON(200, res)
 }

@@ -13,6 +13,9 @@ export default function ({ source }: { source: string }) {
             const hls = new Hls()
             hls.loadSource(source)
             const player = new Plyr(video, defaultOptions)
+            player.on('play', (_) => {
+                player.forward()
+            })
             hls.attachMedia(video)
         } else {
             console.error(
@@ -23,7 +26,7 @@ export default function ({ source }: { source: string }) {
     return (
         <>
             <video
-                style="--plyr-color-main: #CF0031;"
+                style="--plyr-color-main: #CF0031; .plyr__progress{ pointer-events: none; } "
                 playsinline
                 data-displaymaxtap
                 ref={video}

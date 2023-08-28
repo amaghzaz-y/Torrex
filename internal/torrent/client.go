@@ -10,7 +10,7 @@ import (
 )
 
 type Client struct {
-	torrentClient *torrent.Client
+	*torrent.Client
 }
 
 func DefaultClient() *Client {
@@ -30,12 +30,12 @@ type Torrent struct {
 }
 
 func (c *Client) NewTorrent(title, magnet string) *Torrent {
-	t, err := c.torrentClient.AddMagnet(magnet)
+	t, err := c.AddMagnet(magnet)
 	if err != nil {
 		log.Println("error: cannot add magnet to torrent client for", title)
 	}
 	torr := &Torrent{
-		client:   c.torrentClient,
+		client:   c.Client,
 		title:    title,
 		filepath: "",
 		port:     fmt.Sprint(rand.Intn(65536-1024) + 1024),
@@ -51,7 +51,9 @@ func (c *Client) NewTorrent(title, magnet string) *Torrent {
 		return nil
 	}
 }
-
+func (c *Client) Close() {
+	c.Client.Close()
+}
 func (t *Torrent) UdpPort() string {
 	return t.port
 }

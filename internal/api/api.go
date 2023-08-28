@@ -5,47 +5,37 @@ import (
 	"net/http"
 
 	"github.com/amaghzaz-y/torrex/internal/torrex"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cache"
-	"github.com/gofiber/fiber/v2/middleware/compress"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/csrf"
-	"github.com/gofiber/fiber/v2/middleware/helmet"
-	"github.com/gofiber/fiber/v2/middleware/idempotency"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/monitor"
-	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type Api struct {
-	server *fiber.App
+	server *echo.Echo
 	*torrex.Torrex
 }
 
 func New() *Api {
+	e := echo.New()
 	torrex := torrex.New()
-	app := fiber.New()
-	app.Use(cache.New())
-	app.Use(compress.New())
-	app.Use(cors.New())
-	app.Use(csrf.New())
-	app.Use(helmet.New())
-	app.Use(idempotency.New())
-	// app.Use(limiter.New())
-	app.Use(logger.New())
-	app.Use(recover.New())
+	e.Use(middleware.RemoveTrailingSlash())
+	e.Use(middleware.CORS())
+	e.Use(middleware.CSRF())
+	e.Use(middleware.Gzip())
+	e.Use(middleware.Decompress())
+	e.Use(middleware.Logger())
 	return &Api{
-		app,
+		e,
 		torrex,
 	}
 }
 
 func Start() {
 	api := New()
-	api.server.Get("/metrics", monitor.New(monitor.Config{Title: "Torrex Metrics"}))
-	api.server.Get("/search/:query", api.searchHandler)
+	defer api.Close()
+	api.server.GET("/search/:query", api.searchHandler)
+	api.server.GET("/admin/room/new/:id", api.NewRoomHanlder)
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
-	api.server.Listen(":4000")
+	api.server.Start(":4000")
 }

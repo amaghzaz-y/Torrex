@@ -32,7 +32,7 @@ func (s *Store) GetRoom(id string) (*model.Room, error) {
 	defer txn.Rollback()
 	var room model.Room
 
-	blob := txn.Bucket([]byte("rooms")).Get([]byte(room.Id))
+	blob := txn.Bucket([]byte("rooms")).Get([]byte(id))
 	if blob == nil {
 		return nil, errors.New("room not found")
 	}
