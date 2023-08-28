@@ -1,6 +1,7 @@
 import { A } from '@solidjs/router'
 import { AiOutlineYoutube } from 'solid-icons/ai'
 import { RiMediaPlayMiniLine } from 'solid-icons/ri'
+import { HOSTPORT } from '~/config'
 import { Movie } from '~/types/movie'
 export default function ({
     movie,
@@ -34,7 +35,7 @@ export default function ({
                         <AiOutlineYoutube font-size="1.5rem" />
                     </button>
                     <A
-                        href={'/watch/' + stream}
+                        href={`${HOSTPORT}/watch/${stream}`}
                         class="flex items-center p-2 font-size-4 rounded-2 text-torrex-text
                             bg-torrex-secondary outline-none 
                              border-none fill-torrex-text

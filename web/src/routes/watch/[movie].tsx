@@ -8,9 +8,11 @@ export default function Index() {
     const params = useParams()
     let path = `${HOSTPORT}/stream/${params['movie']}/index.m3u8`
     const [data] = createResource<Room>(async () => {
-        return await (
-            await fetch(`${HOSTPORT}/rooms/' + params['movie']`)
+        let x = await (
+            await fetch(`${HOSTPORT}/rooms/${params['movie']}`)
         ).json()
+        console.log(x)
+        return x
     })
 
     return (

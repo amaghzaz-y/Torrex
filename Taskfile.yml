@@ -4,7 +4,9 @@ tasks:
   build:
     cmds:
       - cd web && npm run build
+      - rm -rf dist
       - cp -r -f web/dist ./dist
+      - go build
     silent: true
   default:
     cmds:
