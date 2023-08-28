@@ -18,6 +18,20 @@ func (a *Api) RoomListHandler(c echo.Context) error {
 	return c.JSON(200, r)
 }
 
+// GET /rooms/:id
+
+func (a *Api) RoomInfoHanlder(c echo.Context) error {
+	id := c.Param("id")
+	if id == "" {
+		return c.String(http.StatusBadRequest, "room id is null")
+	}
+	room, err := a.Store.GetRoom(id)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(200, room)
+}
+
 // returns model.Room as json
 // GET /search/:query
 func (a *Api) searchHandler(c echo.Context) error {

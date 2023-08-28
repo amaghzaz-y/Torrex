@@ -27,8 +27,8 @@ func (m *MpegStream) stream() {
 		"-video_size", "1280x720", //video output
 		"-c:a", "libopus", "-b:a", "72k", "-ac", "2", // audio config
 		"-bufsize", "1500k",
-		"-preset", "ultrafast", //preset
-		"-tune", "zerolatency",
+		"-preset", "veryfast", //preset
+		"-tune", "film",
 		"-maxrate", "1200k", // max upload rate
 		"-f", "mpegts", udp, // output pipeline
 	)

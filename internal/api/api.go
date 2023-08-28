@@ -32,5 +32,6 @@ func Start() {
 	api.server.GET("/search/:query", api.searchHandler)
 	api.server.GET("/admin/room/new/:id", api.NewRoomHanlder)
 	api.server.GET("/rooms", api.RoomListHandler)
+	api.server.GET("/rooms/:id", api.RoomInfoHanlder)
 	api.server.Start(":4000")
 }

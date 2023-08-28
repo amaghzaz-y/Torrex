@@ -49,7 +49,7 @@ func (*LTBXD) fetchMovieInfo(movielink string) (model.Movie, error) {
 		return model.Movie{}, err
 	}
 	bg, _ := doc.Find("#backdrop").Attr("data-backdrop")
-	frame, _ := doc.Find("#poster-zoom").Find("img").First().Attr("src")
+	frame, _ := doc.Find("").First().Attr("src")
 	title := doc.Find("#featured-film-header").Find("h1").First().Text()
 	year := doc.Find("#featured-film-header").Find("small").First().Text()
 	tagline := doc.Find("h4").First().Text()

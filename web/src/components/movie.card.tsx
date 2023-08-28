@@ -1,13 +1,17 @@
+import { A } from '@solidjs/router'
 import { AiOutlineYoutube } from 'solid-icons/ai'
 import { RiMediaPlayMiniLine } from 'solid-icons/ri'
 import { Movie } from '~/types/movie'
-export default function ({ movie }: { movie: Movie }) {
+export default function ({
+    movie,
+    stream,
+}: {
+    movie: Movie
+    stream: string
+}) {
     return (
         <div class="opacity-80 flex w-full h-60 bg-torrex-secondary rounded-3 hover:opacity-100 cursor-default">
-            <img
-                src="https://a.ltrbxd.com/resized/film-poster/8/4/0/8/6/3/840863-scrapper-0-500-0-750-crop.jpg?v=e9c47f6919"
-                class="h-full bg-gray w-55 rounded-3"
-            />
+            <img src={movie.bgimg} class="h-full bg-gray w-92 rounded-3" />
             <div class="flex justify-between flex-col p-5 flex-gap-2 w-full">
                 <div class="flex items-center font-bold flex-gap-10 font-size-6">
                     {movie.title}
@@ -29,7 +33,8 @@ export default function ({ movie }: { movie: Movie }) {
                         Trailer
                         <AiOutlineYoutube font-size="1.5rem" />
                     </button>
-                    <button
+                    <A
+                        href={'/watch/' + stream}
                         class="flex items-center p-2 font-size-4 rounded-2 text-torrex-text
                             bg-torrex-secondary outline-none 
                              border-none fill-torrex-text
@@ -37,7 +42,7 @@ export default function ({ movie }: { movie: Movie }) {
                              cursor-pointer">
                         Join Stream
                         <RiMediaPlayMiniLine font-size="1.5rem" />
-                    </button>
+                    </A>
                 </div>
             </div>
         </div>
