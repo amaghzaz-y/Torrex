@@ -7,7 +7,7 @@ import (
 )
 
 type Store struct {
-	kv *bbolt.DB
+	*bbolt.DB
 }
 
 func New(path ...string) (*Store, error) {

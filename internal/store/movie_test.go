@@ -15,11 +15,11 @@ func TestMovieRW(t *testing.T) {
 		Url:   "http://localmovie.to",
 		Title: "Some Random",
 	}
-	err = s.MovieUpsert(movie)
+	err = s.MovieUpsert("somemagnet", movie)
 	if err != nil {
 		t.Fatal(err)
 	}
-	m, err := s.GetMovieByUrl("http://localmovie.to")
+	m, err := s.GetMovieByUrl("somemagnet")
 	if err != nil {
 		t.Fatal(err)
 	}

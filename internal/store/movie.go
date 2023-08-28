@@ -3,12 +3,15 @@ package store
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"hash/adler32"
 
 	model "github.com/amaghzaz-y/torrex/internal/models"
 )
 
-func (s *Store) MovieUpsert(movie *model.Movie) error {
-	txn, err := s.kv.Begin(true)
+// the key is the magnet since it's faster to scrape it
+func (s *Store) MovieUpsert(magnet string, movie *model.Movie) error {
+	txn, err := s.Begin(true)
 	if err != nil {
 		return err
 	}
@@ -17,21 +20,23 @@ func (s *Store) MovieUpsert(movie *model.Movie) error {
 	if err != nil {
 		return err
 	}
-	err = txn.Bucket([]byte("movies")).Put([]byte(movie.Url), json)
+	crc := fmt.Sprint(adler32.Checksum([]byte(magnet)))
+	err = txn.Bucket([]byte("movies")).Put([]byte(crc), json)
 	if err != nil {
 		return err
 	}
 	return txn.Commit()
 }
 
-func (s *Store) GetMovieByUrl(url string) (*model.Movie, error) {
-	txn, err := s.kv.Begin(false)
+func (s *Store) GetMovieByUrl(magnet string) (*model.Movie, error) {
+	txn, err := s.Begin(false)
 	if err != nil {
 		return nil, err
 	}
 	defer txn.Rollback()
 	var movie model.Movie
-	blob := txn.Bucket([]byte("movies")).Get([]byte(url))
+	crc := fmt.Sprint(adler32.Checksum([]byte(magnet)))
+	blob := txn.Bucket([]byte("movies")).Get([]byte(crc))
 	if blob == nil {
 		return nil, errors.New("movie not found")
 	}
