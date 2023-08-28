@@ -7,15 +7,13 @@ import (
 )
 
 func TestMovieRW(t *testing.T) {
-	s, err := New("torrex.dev.data")
-	if err != nil {
-		t.Fatal(err)
-	}
+	s := New("torrex.dev.data")
+
 	movie := &model.Movie{
 		Url:   "http://localmovie.to",
 		Title: "Some Random",
 	}
-	err = s.MovieUpsert("somemagnet", movie)
+	err := s.UpsertMovie("somemagnet", movie)
 	if err != nil {
 		t.Fatal(err)
 	}

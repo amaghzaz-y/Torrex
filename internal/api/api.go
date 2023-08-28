@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/amaghzaz-y/torrex/internal/torrex"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cache"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -16,7 +17,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func Start() {
+type Api struct {
+	server *fiber.App
+	*torrex.Torrex
+}
+
+func New() *Api {
+	torrex := torrex.New()
 	app := fiber.New()
 	app.Use(cache.New())
 	app.Use(compress.New())
@@ -27,10 +34,18 @@ func Start() {
 	// app.Use(limiter.New())
 	app.Use(logger.New())
 	app.Use(recover.New())
-	app.Get("/metrics", monitor.New(monitor.Config{Title: "Torrex Metrics"}))
-	app.Get("/search/:query", searchHandler)
+	return &Api{
+		app,
+		torrex,
+	}
+}
+
+func Start() {
+	api := New()
+	api.server.Get("/metrics", monitor.New(monitor.Config{Title: "Torrex Metrics"}))
+	api.server.Get("/search/:query", api.searchHandler)
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
-	app.Listen(":4000")
+	api.server.Listen(":4000")
 }

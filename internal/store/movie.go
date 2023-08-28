@@ -10,7 +10,7 @@ import (
 )
 
 // the key is the magnet since it's faster to scrape it
-func (s *Store) MovieUpsert(magnet string, movie *model.Movie) error {
+func (s *Store) UpsertMovie(magnet string, movie *model.Movie) error {
 	txn, err := s.Begin(true)
 	if err != nil {
 		return err

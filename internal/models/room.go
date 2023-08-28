@@ -1,7 +1,7 @@
 package model
 
 type Room struct {
-	Id     string
-	Movie  Movie
-	Magnet string
+	Id     string `json:"id"`
+	Movie  Movie  `json:"movie"`
+	Magnet string `json:"magnet"`
 }

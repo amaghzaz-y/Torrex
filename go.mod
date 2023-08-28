@@ -6,6 +6,7 @@ require (
 	github.com/anacrolix/torrent v1.52.5
 	github.com/bluenviron/mediacommon v1.0.0
 	github.com/gofiber/fiber/v2 v2.48.0
+	github.com/matoous/go-nanoid v1.5.0
 )
 
 require (
