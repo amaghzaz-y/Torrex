@@ -7,3 +7,4 @@ internal/store/torrex.dev.data
 torrex.data
 torrex
 web/client/package-lock.json
+web/admin/package-lock.json

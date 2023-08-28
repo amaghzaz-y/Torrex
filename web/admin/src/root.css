@@ -1,0 +1,38 @@
+/* width */
+::-webkit-scrollbar {
+	width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #2e2e2e;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #3d3d3d;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #202020;
+}
+
+a {
+	text-decoration-style: none;
+	text-decoration-line: none;
+	color: rgba(205, 220, 220, 80%);
+}
+
+.plyr__progress {
+	display: none;
+	pointer-events: none;
+}
+
+.plyr__time {
+	display: none;
+}
+
+.plyr__control {
+	display: none;
+}
