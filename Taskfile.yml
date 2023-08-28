@@ -1,0 +1,14 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - cd web && npm run build
+      - cp -r -f web/dist ./dist
+    silent: true
+  default:
+    cmds:
+      - go run .
+  web:
+    cmds:
+      - cd web && npm run dev

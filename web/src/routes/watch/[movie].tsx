@@ -9,9 +9,10 @@ export default function Index() {
     let path = `${HOSTPORT}/stream/${params['movie']}/index.m3u8`
     const [data] = createResource<Room>(async () => {
         return await (
-            await fetch('https://localhost:4000/rooms/' + params['movie'])
+            await fetch(`${HOSTPORT}/rooms/' + params['movie']`)
         ).json()
     })
+
     return (
         <div class="flex flex-col flex-gap-6 w-4xl self-center justify-center items-center p-10">
             <text class="w-full font-size-6 font-bold">

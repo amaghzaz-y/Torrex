@@ -1,6 +1,9 @@
 package api
 
 import (
+	"embed"
+	"net/http"
+
 	"github.com/amaghzaz-y/torrex/internal/torrex"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -26,8 +29,16 @@ func New() *Api {
 	}
 }
 
-func Start() {
-	api := New()
+func (api *Api) AddFS(content embed.FS) {
+	api.server.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Filesystem: http.FS(content),
+		Root:       "dist/public",
+		Index:      "index.html",
+		HTML5:      true,
+		Browse:     false,
+	}))
+}
+func (api *Api) Start() {
 	defer api.Close()
 	api.server.GET("/search/:query", api.searchHandler)
 	api.server.GET("/admin/room/new/:id", api.NewRoomHanlder)
