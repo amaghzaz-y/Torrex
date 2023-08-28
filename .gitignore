@@ -6,3 +6,4 @@ node_modules
 internal/store/torrex.dev.data
 torrex.data
 torrex
+web/client/package-lock.json
