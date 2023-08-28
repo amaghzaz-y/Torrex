@@ -1,4 +1,4 @@
-import MovieCard from './movie.card'
+// import MovieCard from './movie.card'
 
 export default function () {
     return (
@@ -6,13 +6,6 @@ export default function () {
             <text class="text-torrex-text font-size-3xl font-semibold">
                 Next Sessions
             </text>
-            {/* <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard /> */}
         </div>
     )
 }

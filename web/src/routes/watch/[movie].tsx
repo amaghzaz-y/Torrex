@@ -1,14 +1,15 @@
 import { Show, createResource } from 'solid-js'
 import { useParams } from 'solid-start'
 import MoviePlayer from '~/components/movie.player'
+import { HOSTPORT } from '~/config'
 import { Room } from '~/types/room'
 
 export default function Index() {
     const params = useParams()
-    let path = `http://localhost:4000/stream/${params['movie']}/index.m3u8`
+    let path = `${HOSTPORT}/stream/${params['movie']}/index.m3u8`
     const [data] = createResource<Room>(async () => {
         return await (
-            await fetch('http://localhost:4000/rooms/' + params['movie'])
+            await fetch('https://localhost:4000/rooms/' + params['movie'])
         ).json()
     })
     return (

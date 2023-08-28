@@ -1,10 +1,11 @@
 import { For, Show, createResource } from 'solid-js'
 import MovieCard from './movie.card'
 import { Room } from '~/types/room'
+import { HOSTPORT } from '~/config'
 
 export default function () {
     const [data] = createResource<Room[]>(async () => {
-        return await (await fetch('http://localhost:4000/rooms')).json()
+        return await (await fetch(`${HOSTPORT}/rooms`)).json()
     })
 
     return (
@@ -19,13 +20,6 @@ export default function () {
                     )}
                 </For>
             </Show>
-            {/* <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard /> */}
         </div>
     )
 }
