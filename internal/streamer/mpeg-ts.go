@@ -33,7 +33,6 @@ func (m *MpegStream) stream() {
 		"-f", "mpegts", udp, // output pipeline
 	)
 	defer cmd.Cancel()
-	log.Println("running:", cmd.String())
 	log.Println("starting mpeg streaming", m.uri, "on port", m.port)
 	err := cmd.Run()
 	if err != nil {
