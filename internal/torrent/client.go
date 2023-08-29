@@ -1,9 +1,7 @@
 package torrent
 
 import (
-	"fmt"
 	"log"
-	"math/rand"
 	"time"
 
 	"github.com/anacrolix/torrent"
@@ -26,7 +24,6 @@ type Torrent struct {
 	torrent  *torrent.Torrent
 	title    string
 	filepath string
-	port     string
 }
 
 func (c *Client) NewTorrent(title, magnet string) *Torrent {
@@ -38,7 +35,6 @@ func (c *Client) NewTorrent(title, magnet string) *Torrent {
 		client:   c.Client,
 		title:    title,
 		filepath: "",
-		port:     fmt.Sprint(rand.Intn(65536-1024) + 1024),
 		torrent:  nil,
 	}
 	select {
@@ -53,10 +49,6 @@ func (c *Client) NewTorrent(title, magnet string) *Torrent {
 func (c *Client) Close() {
 	c.Client.Close()
 }
-func (t *Torrent) UdpPort() string {
-	return t.port
-}
-
 func (t *Torrent) FilePath() string {
 	var target *torrent.File
 	var maxSize int64

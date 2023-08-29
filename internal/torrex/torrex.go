@@ -12,10 +12,10 @@ import (
 )
 
 type Torrex struct {
-	Streamer    *streamer.Streamer
 	Store       *store.Store
-	Torrent     *torrent.Client
-	ActiveRooms map[string]*model.Room
+	streamer    *streamer.Streamer
+	torrent     *torrent.Client
+	activeRooms map[string]*model.Room
 }
 
 func New() *Torrex {
@@ -23,39 +23,49 @@ func New() *Torrex {
 	store := store.New("torrex.data")
 	torrent := torrent.DefaultClient()
 	return &Torrex{
-		streamer,
 		store,
+		streamer,
 		torrent,
 		make(map[string]*model.Room, 12),
 	}
 }
 func (t *Torrex) Close() {
 	t.Store.Close()
-	t.Torrent.Close()
+	t.torrent.Close()
 }
 
 func (t *Torrex) NewPipelineHandler(room *model.Room) (echo.HandlerFunc, error) {
-	if _, ok := t.ActiveRooms["foo"]; ok {
+	if _, ok := t.activeRooms[room.Id]; ok {
 		return nil, errors.New("room already exists")
 	}
-	if len(t.ActiveRooms) >= 12 {
+	if len(t.activeRooms) >= 12 {
 		return nil, errors.New("unsufficient resources to handle more streams")
 	}
-	torr := t.Torrent.NewTorrent(room.Movie.Title, room.Magnet)
+	torr := t.torrent.NewTorrent(room.Movie.Title, room.Magnet)
 	go torr.Download()
 	for !torr.Ready() {
 		time.Sleep(1 * time.Second)
 	}
-	handler, flag := t.Streamer.Stream(room.Movie.Title, torr.FilePath(), torr.UdpPort())
-	t.ActiveRooms[room.Id] = room
+	handler, flag := t.streamer.NewRoomStream(room)
+	t.activeRooms[room.Id] = room
 	go func() {
 		<-flag
-		delete(t.ActiveRooms, room.Id)
+		delete(t.activeRooms, room.Id)
 	}()
 	return echo.WrapHandler(handler), nil
 }
 
-func (t *Torrex) KillStream(roomId string) error {
-	
-	return nil
+func (t *Torrex) StopStream(roomId string) {
+	t.streamer.StopStream(roomId)
+}
+
+func (t *Torrex) Rooms() []*model.Room {
+	var rooms []*model.Room
+	for k, v := range t.activeRooms {
+		rooms = append(rooms, &model.Room{
+			Id:    k,
+			Movie: v.Movie,
+		})
+	}
+	return rooms
 }

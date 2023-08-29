@@ -11,11 +11,7 @@ import (
 
 // GET /rooms
 func (a *Api) RoomListHandler(c echo.Context) error {
-	var r []*model.Room
-	for _, v := range a.ActiveRooms {
-		r = append(r, v)
-	}
-	return c.JSON(200, r)
+	return c.JSON(200, a.Rooms())
 }
 
 // GET /rooms/:id
