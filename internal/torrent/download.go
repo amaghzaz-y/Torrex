@@ -3,6 +3,9 @@ package torrent
 import "github.com/anacrolix/torrent"
 
 func (t *Torrent) Download() {
+	if t.Completion() > 99 {
+		return
+	}
 	t.torrent.DownloadAll()
 	var target *torrent.File
 	var maxSize int64

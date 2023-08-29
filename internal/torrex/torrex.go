@@ -35,6 +35,9 @@ func (t *Torrex) Close() {
 }
 
 func (t *Torrex) NewPipelineHandler(room *model.Room) (echo.HandlerFunc, error) {
+	if _, ok := t.ActiveRooms["foo"]; ok {
+		return nil, errors.New("room already exists")
+	}
 	if len(t.ActiveRooms) >= 10 {
 		return nil, errors.New("unsufficient resources to handle more streams")
 	}
