@@ -15,6 +15,8 @@ export default function ({ source }: { source: string }) {
             const player = new Plyr(video, defaultOptions)
             player.on('play', (_) => {
                 player.forward()
+                player.rewind(5)
+                // player.restart()
             })
             hls.attachMedia(video)
         } else {
