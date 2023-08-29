@@ -23,9 +23,7 @@ func (m *MpegStream) stream() {
 	udp := fmt.Sprintf("udp://127.0.0.1:%s?pkt_size=1316", m.port)
 	cmd := exec.Command("ffmpeg",
 		"-re", "-i", m.uri, // input file
-		// "-c:v", "libx264", "-b:v", "1000k", //video config
-		// "-video_size", "1280x720", //video output
-		"-c:v", "copy",
+		"-c:v", "copy", //video config
 		"-c:a", "libopus", "-b:a", "92k", "-ac", "2", // audio config
 		"-preset", "veryfast", //preset
 		"-tune", "film",
