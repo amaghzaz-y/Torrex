@@ -26,7 +26,7 @@ func New() *Torrex {
 		streamer,
 		store,
 		torrent,
-		make(map[string]*model.Room, 10),
+		make(map[string]*model.Room, 12),
 	}
 }
 func (t *Torrex) Close() {
@@ -38,7 +38,7 @@ func (t *Torrex) NewPipelineHandler(room *model.Room) (echo.HandlerFunc, error) 
 	if _, ok := t.ActiveRooms["foo"]; ok {
 		return nil, errors.New("room already exists")
 	}
-	if len(t.ActiveRooms) >= 10 {
+	if len(t.ActiveRooms) >= 12 {
 		return nil, errors.New("unsufficient resources to handle more streams")
 	}
 	torr := t.Torrent.NewTorrent(room.Movie.Title, room.Magnet)
@@ -53,4 +53,9 @@ func (t *Torrex) NewPipelineHandler(room *model.Room) (echo.HandlerFunc, error) 
 		delete(t.ActiveRooms, room.Id)
 	}()
 	return echo.WrapHandler(handler), nil
+}
+
+func (t *Torrex) KillStream(roomId string) error {
+	
+	return nil
 }

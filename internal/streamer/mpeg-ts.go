@@ -9,12 +9,14 @@ import (
 type MpegStream struct {
 	uri  string
 	port string
+	cmd  *exec.Cmd
 }
 
 func newMpegStream(uri string, port string) *MpegStream {
 	return &MpegStream{
 		uri,
 		port,
+		nil,
 	}
 }
 
@@ -31,11 +33,16 @@ func (m *MpegStream) stream() {
 		"-bufsize", "9200k",
 		"-f", "mpegts", udp, // output pipeline
 	)
-	defer cmd.Cancel()
+	defer m.close()
 	log.Println("starting mpeg streaming", m.uri, "on port", m.port)
+	m.cmd = cmd
 	err := cmd.Run()
 	if err != nil {
 		log.Fatalln("error: cannot start mpeg-ts udp streaming :", err)
 	}
 	log.Println("finished mpeg streaming", m.uri, "on port", m.port)
+}
+
+func (m *MpegStream) close() {
+	m.cmd.Process.Kill()
 }
