@@ -46,6 +46,7 @@ func (t *Torrex) NewPipelineHandler(room *model.Room) (echo.HandlerFunc, error) 
 	for !torr.Ready() {
 		time.Sleep(1 * time.Second)
 	}
+	room.Path = torr.FilePath()
 	handler, flag := t.streamer.NewRoomStream(room)
 	t.activeRooms[room.Id] = room
 	go func() {

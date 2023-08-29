@@ -13,6 +13,7 @@ type MpegStream struct {
 }
 
 func newMpegStream(uri string, port string) *MpegStream {
+
 	return &MpegStream{
 		uri,
 		port,
@@ -21,6 +22,10 @@ func newMpegStream(uri string, port string) *MpegStream {
 }
 
 func (m *MpegStream) stream() {
+	if m.uri == "" || m.port == "" {
+		log.Println("cannot start mpeg stream : URI or PORT is undefined")
+		return
+	}
 	// pkg_size=1316 is important for mpeg reader
 	udp := fmt.Sprintf("udp://127.0.0.1:%s?pkt_size=1316", m.port)
 	cmd := exec.Command("ffmpeg",
@@ -33,12 +38,13 @@ func (m *MpegStream) stream() {
 		"-bufsize", "9200k",
 		"-f", "mpegts", udp, // output pipeline
 	)
-	defer m.close()
 	log.Println("starting mpeg streaming", m.uri, "on port", m.port)
 	m.cmd = cmd
 	err := cmd.Run()
 	if err != nil {
-		log.Fatalln("error: cannot start mpeg-ts udp streaming :", err)
+		if err.Error() != "signal: killed" {
+			log.Println("error: mpeg streaming stopped")
+		}
 	}
 	log.Println("finished mpeg streaming", m.uri, "on port", m.port)
 }

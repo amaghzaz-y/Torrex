@@ -109,10 +109,10 @@ func (s *HlsStream) readMpegStream() {
 		}
 	}
 	log.Println("hls stream finished for", s.name, "on port", s.port)
+
 }
 
 func (s *HlsStream) stream() {
-	defer s.close()
 	s.openHlsMuxer()
 	s.openMpegReader()
 	s.openMpegDecoder()

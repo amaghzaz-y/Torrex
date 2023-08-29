@@ -44,5 +44,6 @@ func (api *Api) Start() {
 	api.server.GET("/admin/room/new/:id", api.NewRoomHanlder)
 	api.server.GET("/rooms", api.RoomListHandler)
 	api.server.GET("/rooms/:id", api.RoomInfoHanlder)
+	api.server.GET("/admin/room/kill/:id", api.KillRoomHandler)
 	api.server.Start(":4000")
 }

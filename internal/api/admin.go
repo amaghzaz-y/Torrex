@@ -25,3 +25,14 @@ func (a *Api) NewRoomHanlder(c echo.Context) error {
 	a.server.GET(fmt.Sprintf("/stream/%s/*", room.Id), handler)
 	return c.JSON(200, fmt.Sprintf("/stream/%s/*", room.Id))
 }
+
+// GET admin/room/kill/:id
+func (a *Api) KillRoomHandler(c echo.Context) error {
+	roomId := c.Param("id")
+	if roomId == "" {
+		c.Logger().Print(roomId)
+		return c.String(http.StatusBadRequest, "room id is null")
+	}
+	a.Torrex.StopStream(roomId)
+	return c.NoContent(200)
+}
