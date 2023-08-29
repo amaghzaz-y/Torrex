@@ -27,10 +27,10 @@ func (m *MpegStream) stream() {
 		// "-video_size", "1280x720", //video output
 		"-c:v", "copy",
 		"-c:a", "libopus", "-b:a", "92k", "-ac", "2", // audio config
-		"-bufsize", "10000k",
 		"-preset", "veryfast", //preset
 		"-tune", "film",
-		"-maxrate", "10000k", // max upload rate
+		"-maxrate", "4000k", // max upload rate
+		"-bufsize", "9200k",
 		"-f", "mpegts", udp, // output pipeline
 	)
 	defer cmd.Cancel()
