@@ -15,8 +15,8 @@ type Message struct {
 }
 
 type ChatRoom struct {
-	Id       string
-	Messages *list.List
+	id       string
+	messages *list.List
 }
 
 func New() *Chat {
@@ -29,8 +29,8 @@ func (c *Chat) NewChatRoom() *ChatRoom {
 	id, _ := nanoid.ID(21)
 	messages := list.New()
 	cr := &ChatRoom{
-		Id:       id,
-		Messages: messages,
+		id,
+		messages,
 	}
 	c.rooms[id] = cr
 	return cr
@@ -45,18 +45,18 @@ func (cr *ChatRoom) PushMessage(sender string, content string) {
 		sender,
 		content,
 	}
-	if cr.Messages.Len() < 50 {
-		cr.Messages.PushFront(message)
+	if cr.messages.Len() < 50 {
+		cr.messages.PushFront(message)
 	} else {
-		first := cr.Messages.Back()
-		cr.Messages.Remove(first)
-		cr.Messages.PushFront(message)
+		first := cr.messages.Back()
+		cr.messages.Remove(first)
+		cr.messages.PushFront(message)
 	}
 }
 
 func (cr *ChatRoom) List() []Message {
 	var m []Message
-	for e := cr.Messages.Front(); e != nil; e = e.Next() {
+	for e := cr.messages.Front(); e != nil; e = e.Next() {
 		if msg, ok := e.Value.(Message); ok {
 			m = append(m, msg)
 		}
