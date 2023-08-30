@@ -4,7 +4,7 @@ import (
 	"embed"
 	"net/http"
 
-	"github.com/amaghzaz-y/torrex/internal/torrex"
+	torrex "github.com/amaghzaz-y/torrex/internal/core"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
