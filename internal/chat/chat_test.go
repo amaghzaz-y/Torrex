@@ -2,9 +2,11 @@ package chat
 
 import (
 	"testing"
+
+	nanoid "github.com/matoous/go-nanoid"
 )
 
-func TestChat(t *testing.T) {
+func TestChatFlow(t *testing.T) {
 	chat := New()
 	room := chat.NewChatRoom()
 	room.PushMessage("Alice", "Hello There.")
@@ -29,5 +31,17 @@ func TestChat(t *testing.T) {
 	if len(messages) != 3 {
 		t.Log("Want Len 3 but got ", len(messages))
 		t.Fail()
+	}
+}
+
+func TestChatOverFlow(t *testing.T) {
+	chat := New()
+	room := chat.NewChatRoom()
+	for x := 0; x < 100; x++ {
+		str, _ := nanoid.Nanoid(20)
+		room.PushMessage(str, str)
+	}
+	if len(room.List()) != 50 {
+		t.Log("want 50 but got", len(room.List()))
 	}
 }
