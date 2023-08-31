@@ -10,8 +10,8 @@ type Chat struct {
 	rooms map[string]*ChatRoom
 }
 type Message struct {
-	Sender  string
-	Content string
+	Sender  string `json:"sender"`
+	Content string `json:"content"`
 }
 
 type ChatRoom struct {
@@ -36,6 +36,14 @@ func (c *Chat) NewChatRoom() *ChatRoom {
 	return cr
 }
 
+// returns an existing chatroom, or creates a new one if it doesnt exists
+func (c *Chat) ChatRoom(id string) *ChatRoom {
+	if r, e := c.rooms[id]; e {
+		return r
+	}
+	return c.NewChatRoom()
+}
+
 func (c *Chat) DeleteChatRoom(id string) {
 	delete(c.rooms, id)
 }
@@ -54,7 +62,7 @@ func (cr *ChatRoom) PushMessage(sender string, content string) {
 	}
 }
 
-func (cr *ChatRoom) List() []Message {
+func (cr *ChatRoom) Messages() []Message {
 	var m []Message
 	for e := cr.messages.Front(); e != nil; e = e.Next() {
 		if msg, ok := e.Value.(Message); ok {

@@ -12,7 +12,7 @@ func TestChatFlow(t *testing.T) {
 	room.PushMessage("Alice", "Hello There.")
 	room.PushMessage("Bob", "Hey, How Are you ?")
 	room.PushMessage("Alice", "I'm Good !")
-	messages := room.List()
+	messages := room.Messages()
 	msg0 := Message{"Alice", "I'm Good !"}
 	msg1 := Message{"Bob", "Hey, How Are you ?"}
 	msg2 := Message{"Alice", "Hello There."}
@@ -41,7 +41,7 @@ func TestChatOverFlow(t *testing.T) {
 		str, _ := nanoid.Nanoid(20)
 		room.PushMessage(str, str)
 	}
-	if len(room.List()) != 50 {
-		t.Log("want 50 but got", len(room.List()))
+	if len(room.Messages()) != 50 {
+		t.Log("want 50 but got", len(room.Messages()))
 	}
 }

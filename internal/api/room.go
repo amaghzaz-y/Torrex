@@ -7,7 +7,25 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// GET admin/room/new/:id
+// GET /room/list
+func (a *Api) roomListHandler(c echo.Context) error {
+	return c.JSON(200, a.Rooms())
+}
+
+// GET /room/:id
+func (a *Api) roomInfoHanlder(c echo.Context) error {
+	id := c.Param("id")
+	if id == "" {
+		return c.String(http.StatusBadRequest, "room id is null")
+	}
+	room, err := a.Store.GetRoom(id)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(200, room)
+}
+
+// GET /room/new/:id
 func (a *Api) newRoomHanlder(c echo.Context) error {
 	roomId := c.Param("id")
 	if roomId == "" {
@@ -26,7 +44,7 @@ func (a *Api) newRoomHanlder(c echo.Context) error {
 	return c.JSON(200, fmt.Sprintf("/stream/%s/*", room.Id))
 }
 
-// GET admin/room/kill/:id
+// GET /room/delete/:id
 func (a *Api) killRoomHandler(c echo.Context) error {
 	roomId := c.Param("id")
 	if roomId == "" {

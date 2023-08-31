@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/amaghzaz-y/torrex/internal/chat"
 	model "github.com/amaghzaz-y/torrex/internal/models"
 	"github.com/amaghzaz-y/torrex/internal/store"
 	"github.com/amaghzaz-y/torrex/internal/streamer"
@@ -15,6 +16,7 @@ type Torrex struct {
 	Store       *store.Store
 	streamer    *streamer.Streamer
 	torrent     *torrent.Client
+	Chat        *chat.Chat
 	activeRooms map[string]*model.Room
 }
 
@@ -22,10 +24,12 @@ func New() *Torrex {
 	streamer := streamer.NewStreamer()
 	store := store.New("torrex.data")
 	torrent := torrent.DefaultClient()
+	chat := chat.New()
 	return &Torrex{
 		store,
 		streamer,
 		torrent,
+		chat,
 		make(map[string]*model.Room, 12),
 	}
 }

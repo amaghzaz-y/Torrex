@@ -45,6 +45,8 @@ func (api *Api) Start() {
 	api.server.GET("/admin/room/kill/:id", api.killRoomHandler)
 	api.server.GET("/rooms", api.roomListHandler)
 	api.server.GET("/rooms/:id", api.roomInfoHanlder)
+	api.server.GET("/chat/:room/new/:sender/:message", api.newMessageHandler)
+	api.server.GET("/chat/:room", api.chatMessagesHandler)
 	api.server.GET("/search/:query", api.searchHandler)
 	api.server.Start("127.0.0.1:4000")
 }
