@@ -8,7 +8,7 @@ import (
 )
 
 // GET admin/room/new/:id
-func (a *Api) NewRoomHanlder(c echo.Context) error {
+func (a *Api) newRoomHanlder(c echo.Context) error {
 	roomId := c.Param("id")
 	if roomId == "" {
 		c.Logger().Print(roomId)
@@ -27,7 +27,7 @@ func (a *Api) NewRoomHanlder(c echo.Context) error {
 }
 
 // GET admin/room/kill/:id
-func (a *Api) KillRoomHandler(c echo.Context) error {
+func (a *Api) killRoomHandler(c echo.Context) error {
 	roomId := c.Param("id")
 	if roomId == "" {
 		c.Logger().Print(roomId)

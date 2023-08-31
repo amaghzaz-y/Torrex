@@ -38,12 +38,13 @@ func (api *Api) AddFS(content embed.FS) {
 		Browse:     false,
 	}))
 }
+
 func (api *Api) Start() {
 	defer api.Close()
+	api.server.GET("/admin/room/new/:id", api.newRoomHanlder)
+	api.server.GET("/admin/room/kill/:id", api.killRoomHandler)
+	api.server.GET("/rooms", api.roomListHandler)
+	api.server.GET("/rooms/:id", api.roomInfoHanlder)
 	api.server.GET("/search/:query", api.searchHandler)
-	api.server.GET("/admin/room/new/:id", api.NewRoomHanlder)
-	api.server.GET("/rooms", api.RoomListHandler)
-	api.server.GET("/rooms/:id", api.RoomInfoHanlder)
-	api.server.GET("/admin/room/kill/:id", api.KillRoomHandler)
-	api.server.Start(":4000")
+	api.server.Start("127.0.0.1:4000")
 }

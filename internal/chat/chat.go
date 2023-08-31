@@ -3,7 +3,7 @@ package chat
 import (
 	"container/list"
 
-	nanoid "github.com/matoous/go-nanoid"
+	"github.com/amaghzaz-y/torrex/internal/nanoid"
 )
 
 type Chat struct {

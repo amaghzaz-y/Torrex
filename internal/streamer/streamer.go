@@ -1,7 +1,6 @@
 package streamer
 
 import (
-	_ "embed"
 	"net/http"
 
 	model "github.com/amaghzaz-y/torrex/internal/models"
