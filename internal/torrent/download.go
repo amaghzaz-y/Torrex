@@ -29,7 +29,7 @@ func (t *Torrent) Download() {
 func (t *Torrent) Completion() float64 {
 	info := t.torrent.Info()
 	if info == nil {
-		return 0
+		return 0.0
 	}
 	return float64(t.torrent.BytesCompleted()) / float64(info.TotalLength()) * 100
 }

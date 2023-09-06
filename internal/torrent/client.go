@@ -41,7 +41,7 @@ func (c *Client) NewTorrent(title, magnet string) *Torrent {
 	case <-t.GotInfo():
 		torr.torrent = t
 		return torr
-	case <-time.After(10 * time.Second):
+	case <-time.After(20 * time.Second):
 		log.Println("timeout: cannot load torrent from magnet : ", title)
 		return nil
 	}
